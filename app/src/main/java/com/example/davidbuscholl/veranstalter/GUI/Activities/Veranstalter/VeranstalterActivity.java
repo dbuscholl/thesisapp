@@ -1,5 +1,6 @@
 package com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -24,8 +27,10 @@ import com.android.volley.toolbox.Volley;
 import com.example.davidbuscholl.veranstalter.Entities.User;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.LoginRegisterActivity;
 import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
+import com.example.davidbuscholl.veranstalter.Helpers.Token;
 import com.example.davidbuscholl.veranstalter.R;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -34,12 +39,15 @@ import java.util.Map;
 public class VeranstalterActivity extends AppCompatActivity {
     private ProgressDialog progress;
     private SharedPreferences prefs;
-
+    private ListView eventlist;
+    private static Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_veranstalter);
+        context = this;
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -57,8 +65,11 @@ public class VeranstalterActivity extends AppCompatActivity {
         progress.setMessage("Bitte warten...");
         progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
+        eventlist = (ListView) findViewById(R.id.eventsListView);
+        load(VeranstalterActivity.this);
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -130,5 +141,56 @@ public class VeranstalterActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static void load(final Context context) {
+        final ProgressDialog progress = new ProgressDialog(context);
+        progress.setTitle("Ladevorgang");
+        progress.setMessage("Bitte warten...");
+        progress.setCancelable(false);
+        progress.show();
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+        String url = "http://37.221.196.48/thesis/public/user/events?token=" + Token.get(context);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                progress.dismiss();
+                Log.d(this.toString(),response);
+                JSONObject ob = null;
+                try {
+                    ob = new JSONObject(response);
+                    if(ob.has("success")) {
+                        if (ob.getBoolean("success")) {
+                            JSONArray events = ob.getJSONArray("events");
+                            EventListAdapter ela = new EventListAdapter(context, events);
+                            ListView eventlist = (ListView) ((Activity) context).findViewById(R.id.eventsListView);
+                            eventlist.setAdapter(ela);
+                        } else {
+                            ServerErrorDialog.show(context);
+                        }
+                        progress.dismiss();
+                    } else {
+                        ServerErrorDialog.show(context);
+                        ((Activity) context).finish();
+                    }
+                } catch (Exception e) {
+                    ServerErrorDialog.show(context);
+                    e.printStackTrace();
+                    ((Activity) context).finish();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        queue.add(stringRequest);
+    }
+
+    public static Context getContext() {
+        return context;
     }
 }

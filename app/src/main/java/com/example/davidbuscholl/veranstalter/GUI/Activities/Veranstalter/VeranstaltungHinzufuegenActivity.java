@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.app.TaskStackBuilder;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -144,6 +146,8 @@ public class VeranstaltungHinzufuegenActivity extends AppCompatActivity {
                     ob = new JSONObject(response);
                     if(ob.has("success")) {
                         if (ob.getBoolean("success")) {
+                            VeranstalterActivity.load(VeranstalterActivity.getContext());
+                            Toast.makeText(VeranstaltungHinzufuegenActivity.this,"Veranstaltung hinzugefügt!",Toast.LENGTH_SHORT);
                             finish();
                         } else {
                             if(ob.has("error")) ServerErrorDialog.show(VeranstaltungHinzufuegenActivity.this, ob.getString("error"));
