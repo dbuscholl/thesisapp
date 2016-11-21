@@ -14,15 +14,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".VeranstalterActivity"
+            android:name=".GUI.Activities.Veranstalter.VeranstaltungDetailActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".LoginRegisterActivity"
+            android:name=".GUI.Activities.LoginRegisterActivity"
             android:label="@string/title_activity_login_register"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".GUI.Activities.MainActivity"
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,6 +30,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".GUI.Activities.Veranstalter.VeranstalterActivity"
+            android:label="@string/title_activity_veranstalter"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".GUI.Activities.Veranstalter.VeranstaltungHinzufuegenActivity"
+            android:label="Veranstaltung hinzufügen"
+            android:parentActivityName=".GUI.Activities.Veranstalter.VeranstalterActivity"></activity>
     </application>
 
 </manifest>

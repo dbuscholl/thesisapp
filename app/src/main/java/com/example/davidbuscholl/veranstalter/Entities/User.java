@@ -1,4 +1,4 @@
-package com.example.davidbuscholl.veranstalter;
+package com.example.davidbuscholl.veranstalter.Entities;
 
 import java.util.ArrayList;
 

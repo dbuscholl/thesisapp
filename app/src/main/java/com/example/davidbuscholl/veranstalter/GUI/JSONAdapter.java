@@ -1,4 +1,4 @@
-package com.example.davidbuscholl.veranstalter;
+package com.example.davidbuscholl.veranstalter.GUI;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+
+import com.example.davidbuscholl.veranstalter.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

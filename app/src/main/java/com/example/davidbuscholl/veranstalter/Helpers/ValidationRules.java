@@ -1,4 +1,4 @@
-package com.example.davidbuscholl.veranstalter;
+package com.example.davidbuscholl.veranstalter.Helpers;
 
 import java.util.HashMap;
 
@@ -6,7 +6,7 @@ import java.util.HashMap;
  * Created by David Buscholl on 10.11.2016.
  */
 
-public class Rules {
+public class ValidationRules {
     public static HashMap<String, HashMap<String, String>> get() {
         HashMap<String, HashMap<String, String>> rules = new HashMap<String, HashMap<String, String>>();
         HashMap<String, String> usernamerules = new HashMap<String, String>();

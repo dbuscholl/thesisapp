@@ -1,4 +1,4 @@
-package com.example.davidbuscholl.veranstalter;
+package com.example.davidbuscholl.veranstalter.GUI.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -15,6 +15,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter.VeranstalterActivity;
+import com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter.VeranstaltungDetailActivity;
+import com.example.davidbuscholl.veranstalter.R;
+import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
+import com.example.davidbuscholl.veranstalter.Entities.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;

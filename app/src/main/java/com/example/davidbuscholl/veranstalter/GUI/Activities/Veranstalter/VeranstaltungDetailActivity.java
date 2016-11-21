@@ -1,4 +1,4 @@
-package com.example.davidbuscholl.veranstalter;
+package com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -31,13 +31,18 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.davidbuscholl.veranstalter.GUI.Activities.LoginRegisterActivity;
+import com.example.davidbuscholl.veranstalter.MeetingsFragment;
+import com.example.davidbuscholl.veranstalter.R;
+import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
+import com.example.davidbuscholl.veranstalter.Entities.User;
 
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class VeranstalterActivity extends AppCompatActivity {
+public class VeranstaltungDetailActivity extends AppCompatActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -59,7 +64,7 @@ public class VeranstalterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_veranstalter);
+        setContentView(R.layout.activity_veranstalterdetail);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -106,78 +111,6 @@ public class VeranstalterActivity extends AppCompatActivity {
         });
         queue.add(stringRequest);
 */
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        if(User.roles().indexOf(2)==-1) {
-            menu.findItem(R.id.action_divers).setVisible(false);
-        }
-        if(User.roles().indexOf(3)==-1) {
-            menu.findItem(R.id.action_participants).setVisible(false);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            progress.show();
-            RequestQueue queue = Volley.newRequestQueue(this);
-            String url = "http://37.221.196.48/thesis/public/user/logout";
-
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.d(this.toString(),response);
-                    JSONObject ob = null;
-                    try {
-                        ob = new JSONObject(response);
-                        if(ob.has("success")) {
-                            if (ob.getBoolean("success")) {
-                                startActivity(new Intent(getApplicationContext(), LoginRegisterActivity.class));
-                                finish();
-                            } else {
-                                ServerErrorDialog.show(VeranstalterActivity.this);
-                            }
-                            progress.dismiss();
-                        } else {
-                            ServerErrorDialog.show(VeranstalterActivity.this);
-                            finish();
-                        }
-                    } catch (Exception e) {
-                        ServerErrorDialog.show(VeranstalterActivity.this);
-                        e.printStackTrace();
-                        finish();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    error.printStackTrace();
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> map = new HashMap<>();
-                    map.put("token",prefs.getString("token","0"));
-                    return map;
-                }
-            };
-            queue.add(stringRequest);
-
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -249,7 +182,7 @@ public class VeranstalterActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Treffen";
+                    return "Details";
                 case 1:
                     return "Besucher";
             }

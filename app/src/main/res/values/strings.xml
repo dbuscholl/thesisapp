@@ -18,4 +18,5 @@
     </string>
     <string name="prompt_user">Benutzername</string>
     <string name="title_activity_login_register">Login &amp; Register</string>
+    <string name="title_activity_veranstalter">VeranstalterActivity</string>
 </resources>
