@@ -107,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
                 case 2:
                     context.startActivity(new Intent(context,VeranstalterActivity.class));
                     break;
+                case 3:
+                    context.startActivity(new Intent(context,VeranstalterActivity.class));
+                    break;
             }
         }
     }

@@ -50,6 +50,34 @@
         android:hint="Passwort wiederholen"
         android:layout_marginBottom="5dp" />
 
+    <TextView
+        android:text="Registrieren als:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp" />
+
+    <CheckBox
+        android:text="Teilnehmer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/register_cbTeilnehmer"
+        android:checked="true" />
+
+    <CheckBox
+        android:text="Veranstalter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/register_cbVerantalter" />
+
+    <CheckBox
+        android:text="Fahrdienstleister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/register_cbFahrdienstleister" />
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -63,6 +91,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/registerButton"
             android:layout_weight=".45" />
+
     </LinearLayout>
 
 </LinearLayout>

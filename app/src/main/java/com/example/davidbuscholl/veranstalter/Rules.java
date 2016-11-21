@@ -28,10 +28,15 @@ public class Rules {
         emailrules.put("max", "50");
         emailrules.put("type", "email");
 
+        HashMap<String,String> typecountrules = new HashMap<>();
+        typecountrules.put("required","true");
+        typecountrules.put("minval","1");
+
         rules.put("username", usernamerules);
         rules.put("password", passwordrules);
         rules.put("password_again", pwagainrules);
         rules.put("email", emailrules);
+        rules.put("typecount",typecountrules);
         return rules;
     }
 }

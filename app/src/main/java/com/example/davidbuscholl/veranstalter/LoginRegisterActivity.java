@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -190,7 +191,11 @@ public class LoginRegisterActivity extends AppCompatActivity {
                     progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
                     progress.show();
 
-                    HashMap<String, String> source = new HashMap<String, String>();
+                    boolean veranstalter = ((CheckBox) rootview.findViewById(R.id.register_cbVerantalter)).isChecked();
+                    boolean fahrdienst = ((CheckBox) rootview.findViewById(R.id.register_cbFahrdienstleister)).isChecked();
+                    boolean teilnehmer = ((CheckBox) rootview.findViewById(R.id.register_cbTeilnehmer)).isChecked();
+
+                    final HashMap<String, String> source = new HashMap<String, String>();
                     final String usernamestring = username.getText().toString().trim();
                     final String passwordstring = password.getText().toString().trim();
                     final String passwordagainstring = passwordagain.getText().toString().trim();
@@ -199,6 +204,20 @@ public class LoginRegisterActivity extends AppCompatActivity {
                     source.put("password", passwordstring);
                     source.put("password_again", passwordagainstring);
                     source.put("email",emailstring);
+                    int typecount = 0;
+                    if(veranstalter) {
+                        source.put("organizer", String.valueOf(veranstalter));
+                        typecount++;
+                    }
+                    if(fahrdienst) {
+                        source.put("driver", String.valueOf(fahrdienst));
+                        typecount++;
+                    }
+                    if(teilnehmer) {
+                        source.put("participant", String.valueOf(teilnehmer));
+                        typecount++;
+                    }
+                    source.put("typecount",String.valueOf(typecount));
 
                     Validation validate = new Validation();
                     validate.check(source,Rules.get());
@@ -276,13 +295,7 @@ public class LoginRegisterActivity extends AppCompatActivity {
                     }) {
                         @Override
                         protected Map<String, String> getParams() throws AuthFailureError {
-                            Map<String, String> params = new HashMap<String, String>();
-                            params.put("username", usernamestring);
-                            params.put("email", emailstring);
-                            params.put("password", passwordstring);
-                            params.put("password_again", passwordagainstring);
-                            params.put("group","2");
-                            return params;
+                            return source;
                         }
                     };
                     queue.add(stringRequest);

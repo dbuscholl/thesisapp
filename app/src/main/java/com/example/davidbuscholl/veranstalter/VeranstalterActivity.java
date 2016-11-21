@@ -112,10 +112,10 @@ public class VeranstalterActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        if(User.roles().indexOf(3)==-1) {
+        if(User.roles().indexOf(2)==-1) {
             menu.findItem(R.id.action_divers).setVisible(false);
         }
-        if(User.roles().indexOf(4)==-1) {
+        if(User.roles().indexOf(3)==-1) {
             menu.findItem(R.id.action_participants).setVisible(false);
         }
         return true;

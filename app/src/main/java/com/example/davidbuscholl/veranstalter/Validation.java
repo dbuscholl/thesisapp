@@ -47,9 +47,15 @@ public class Validation {
                         case "type":
                             if(ruleValue.equals("email")) {
                                 if(!Patterns.EMAIL_ADDRESS.matcher(value).matches()){
-                                    errors.add(itemText + " im ungültigen Format!");
+                                    errors.add(itemText + " im ungültigen Format");
                                 }
                             }
+                            break;
+                        case "minval":
+                            if(Integer.parseInt(value) < Integer.parseInt(ruleValue)) {
+                                errors.add("Es muss mindestens eine Nutzerrolle ausgewählt sein");
+                            }
+                            break;
                     }
                 }
             }
