@@ -7,9 +7,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.example.davidbuscholl.veranstalter.Entities.Event;
 import com.example.davidbuscholl.veranstalter.R;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 /**
  * Created by David Buscholl on 21.11.2016.
@@ -22,6 +24,14 @@ public class EventListAdapter extends BaseAdapter{
     public EventListAdapter(Context context, JSONArray events) {
         this.events = events;
         this.context = context;
+        Event.clear();
+        try {
+            for(int i = 0; i < events.length(); i++) {
+                Event.add(new Event(Integer.parseInt(events.getJSONObject(i).getString("id")),events.getJSONObject(i).getString("name"),events.getJSONObject(i).getString("adresse")));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -49,7 +59,7 @@ public class EventListAdapter extends BaseAdapter{
             TextView title = (TextView) row.findViewById(R.id.eventlistTitle);
             title.setText(events.getJSONObject(position).getString("name"));
             TextView location = (TextView) row.findViewById(R.id.eventListAddress);
-            location.setText(events.getJSONObject(position).getString("location"));
+            location.setText(events.getJSONObject(position).getString("adresse"));
         } catch(Exception e) {
             e.printStackTrace();
         }

@@ -1,33 +1,24 @@
 package com.example.davidbuscholl.veranstalter.Entities;
 
-import java.util.ArrayList;
-
 /**
- * Created by David Buscholl on 14.11.2016.
+ * Created by David Buscholl on 22.11.2016.
  */
-public class User {
+
+public class Participant {
     private int id;
     private String username;
     private String vorname;
     private String nachname;
-    private String email;
     private String adresse;
-    private String joined;
-    private static ArrayList<Integer> roles = new ArrayList<>();
-    public static ArrayList<Integer> roles() {
-        return roles;
-    }
 
-    public User() {}
+    public Participant() {}
 
-    public User(int id, String username, String vorname, String nachname, String email, String adresse, String joined) {
+    public Participant(int id, String username, String vorname, String nachname, String adresse) {
         this.id = id;
         this.username = username;
         this.vorname = vorname;
         this.nachname = nachname;
-        this.email = email;
         this.adresse = adresse;
-        this.joined = joined;
     }
 
     public int getId() {
@@ -62,35 +53,11 @@ public class User {
         this.nachname = nachname;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getAdresse() {
         return adresse;
     }
 
     public void setAdresse(String adresse) {
         this.adresse = adresse;
-    }
-
-    public String getJoined() {
-        return joined;
-    }
-
-    public void setJoined(String joined) {
-        this.joined = joined;
-    }
-
-    public static ArrayList<Integer> getRoles() {
-        return roles;
-    }
-
-    public static void setRoles(ArrayList<Integer> roles) {
-        User.roles = roles;
     }
 }

@@ -15,14 +15,15 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".GUI.Activities.Veranstalter.VeranstaltungDetailActivity"
-            android:label="@string/app_name"
+            android:label="Detailansicht"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".GUI.Activities.LoginRegisterActivity"
-            android:label="@string/title_activity_login_register"
+            android:label="Login &amp; Registrierung"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".GUI.Activities.MainActivity"
+            android:label="Loginvorgang"
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,7 +33,7 @@
         </activity>
         <activity
             android:name=".GUI.Activities.Veranstalter.VeranstalterActivity"
-            android:label="@string/title_activity_veranstalter"
+            android:label="Veranstaltungen"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".GUI.Activities.Veranstalter.VeranstaltungHinzufuegenActivity"

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
@@ -24,6 +26,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.davidbuscholl.veranstalter.Entities.Event;
 import com.example.davidbuscholl.veranstalter.Entities.User;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.LoginRegisterActivity;
 import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
@@ -167,6 +170,7 @@ public class VeranstalterActivity extends AppCompatActivity {
                             EventListAdapter ela = new EventListAdapter(context, events);
                             ListView eventlist = (ListView) ((Activity) context).findViewById(R.id.eventsListView);
                             eventlist.setAdapter(ela);
+                            eventlist.setOnItemClickListener(new ClickListener());
                         } else {
                             ServerErrorDialog.show(context);
                         }
@@ -192,5 +196,15 @@ public class VeranstalterActivity extends AppCompatActivity {
 
     public static Context getContext() {
         return context;
+    }
+
+    private static class ClickListener implements AdapterView.OnItemClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Intent i = new Intent(context,VeranstaltungDetailActivity.class);
+            i.putExtra("event",position);
+            context.startActivity(i);
+        }
     }
 }
