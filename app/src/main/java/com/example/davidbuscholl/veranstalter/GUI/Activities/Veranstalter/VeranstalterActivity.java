@@ -12,12 +12,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -40,9 +42,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VeranstalterActivity extends AppCompatActivity {
+    private static EventListAdapter ela;
     private ProgressDialog progress;
     private SharedPreferences prefs;
-    private ListView eventlist;
+    private static ListView eventlist;
     private static Context context;
 
     @Override
@@ -69,6 +72,7 @@ public class VeranstalterActivity extends AppCompatActivity {
         progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
         eventlist = (ListView) findViewById(R.id.eventsListView);
+        registerForContextMenu(eventlist);
         load(VeranstalterActivity.this);
 
     }
@@ -167,8 +171,7 @@ public class VeranstalterActivity extends AppCompatActivity {
                     if(ob.has("success")) {
                         if (ob.getBoolean("success")) {
                             JSONArray events = ob.getJSONArray("events");
-                            EventListAdapter ela = new EventListAdapter(context, events);
-                            ListView eventlist = (ListView) ((Activity) context).findViewById(R.id.eventsListView);
+                            ela = new EventListAdapter(context, events);
                             eventlist.setAdapter(ela);
                             eventlist.setOnItemClickListener(new ClickListener());
                         } else {
@@ -192,6 +195,64 @@ public class VeranstalterActivity extends AppCompatActivity {
             }
         });
         queue.add(stringRequest);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        final int listPosition = info.position;
+
+        progress.show();
+        RequestQueue queue = Volley.newRequestQueue(context);
+        String url = "http://37.221.196.48/thesis/public/event/delete";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                progress.dismiss();
+                Log.d(this.toString(),response);
+                JSONObject ob = null;
+                try {
+                    ob = new JSONObject(response);
+                    if(ob.has("success")) {
+                        if (ob.getBoolean("success")) {
+                            Toast.makeText(VeranstalterActivity.this,"Löschen erfolgreich",Toast.LENGTH_SHORT);
+                            load(VeranstalterActivity.this);
+                        } else {
+                            ServerErrorDialog.show(context);
+                        }
+                        progress.dismiss();
+                    } else {
+                        ServerErrorDialog.show(context);
+                        ((Activity) context).finish();
+                    }
+                } catch (Exception e) {
+                    ServerErrorDialog.show(context);
+                    e.printStackTrace();
+                    ((Activity) context).finish();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> map = new HashMap<>();
+                map.put("token", Token.get(context));
+                map.put("id", String.valueOf(Event.get(listPosition).getId()));
+                return map;
+            }
+        };
+        queue.add(stringRequest);
+        return true;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        menu.add("Löschen");
     }
 
     public static Context getContext() {

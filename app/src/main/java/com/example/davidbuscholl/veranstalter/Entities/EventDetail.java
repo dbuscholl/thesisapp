@@ -7,6 +7,7 @@ import java.util.ArrayList;
  */
 
 public class EventDetail {
+    private int id;
     private String title;
     private String location;
     private ArrayList<Participant> participants = new ArrayList<>();
@@ -51,5 +52,13 @@ public class EventDetail {
 
     public void setMeetings(ArrayList<Meeting> meetings) {
         this.meetings = meetings;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 }

@@ -39,4 +39,20 @@ public class ValidationRules {
         rules.put("typecount",typecountrules);
         return rules;
     }
+
+    public static HashMap<String, HashMap<String, String>> getMeetingRules() {
+        HashMap<String, HashMap<String, String>> rules = new HashMap<>();
+        HashMap<String,String> daterules = new HashMap<>();
+        daterules.put("required","true");
+        daterules.put("notempty", "true");
+        rules.put("date", daterules);
+
+        HashMap<String,String> timerules = new HashMap<>();
+        timerules.put("required","true");
+        timerules.put("notempty","true");
+        rules.put("starttime",timerules);
+        rules.put("endtime",timerules);
+
+        return rules;
+    }
 }

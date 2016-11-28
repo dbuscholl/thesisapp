@@ -26,7 +26,7 @@ public class Validation {
                 String value = source.get(item).trim();
 
                 if(rule.equals("required") && value.equals("")) {
-                    errors.add(itemText + "ist ein Pflichtfeld");
+                    errors.add(itemText + " ist ein Pflichtfeld");
                 } else if (!value.equals("")) {
                     switch(rule) {
                         case "min":
@@ -56,6 +56,10 @@ public class Validation {
                                 errors.add("Es muss mindestens eine Nutzerrolle ausgewählt sein");
                             }
                             break;
+                        case "notempty":
+                            if(value.length()<1) {
+                                errors.add("Das Feld " + itemText + " darf nicht leer sein!");
+                            }
                     }
                 }
             }
@@ -78,6 +82,12 @@ public class Validation {
                 return "Passwort wiederholen";
             case "email":
                 return "E-Mail";
+            case "date":
+                return "Datum";
+            case "starttime":
+                return "Beginn";
+            case "endtime":
+                return "Ende";
         }
         return "";
     }

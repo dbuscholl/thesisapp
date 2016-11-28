@@ -4,12 +4,9 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -19,16 +16,20 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -56,24 +57,14 @@ import java.util.Map;
 
 public class VeranstaltungDetailActivity extends AppCompatActivity {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     private static SectionsPagerAdapter mSectionsPagerAdapter;
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     private static ViewPager mViewPager;
     private static ProgressDialog progress;
     private static Event event;
     private static EventDetail eventDetail;
-    private static VeranstaltungDetailActivity context;
+    public static VeranstaltungDetailActivity context;
+    private static int position = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +73,7 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
 
         context = this;
         Intent i = getIntent();
-        int position = i.getIntExtra("event", -1);
+        position = i.getIntExtra("event", -1);
         if (position == -1 || position >= Event.size()) {
             ServerErrorDialog.show(VeranstaltungDetailActivity.this, "Fehlerhafter Aufruf");
             finish();
@@ -97,24 +88,6 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
 
         loadEventExtras(context);
 
-
-/*
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://37.221.196.48/thesis/public/user/3/meetings";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.i(this.toString(),response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        });
-        queue.add(stringRequest);
-*/
     }
 
     public static void loadEventExtras(final VeranstaltungDetailActivity context) {
@@ -148,8 +121,9 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
                             fab.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                                            .setAction("Action", null).show();
+                                    Intent i = new Intent(context,VeranstaltungTreffenActivity.class);
+                                    i.putExtra("event",eventDetail.getId());
+                                    context.startActivity(i);
                                 }
                             });
                         } else {
@@ -177,6 +151,7 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
     private static void createEventDetail(JSONObject ob) {
         eventDetail = new EventDetail();
         try {
+            eventDetail.setId(Integer.parseInt(ob.getJSONObject("data").getString("id")));
             eventDetail.setTitle(ob.getJSONObject("data").getString("name"));
             eventDetail.setLocation(ob.getJSONObject("data").getString("adresse"));
 
@@ -213,10 +188,16 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
+    public static void reload() {
+        Intent i = new Intent(context,VeranstaltungDetailActivity.class);
+        i.putExtra("event",position);
+        context.startActivity(i);
+        context.finish();
+    }
+
+    /*
+        ----------------------  SECTION PAGER ADAPTER --------------------------------------------------
+         */
     public static class SectionsPagerAdapter extends FragmentPagerAdapter {
         private FragmentManager mFragmentManager;
         VeranstaltungDetailBesucherFragment vdbf;
@@ -262,12 +243,17 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    ----------------------  VERANSTALTUNG DETAIL FRAGMENT ------------------------------------------
+     */
 
     public static class VeranstaltungDetailFragment extends Fragment {
         public View rootView;
         public JSONArray jsonParticipants = null;
         private ViewGroup container;
         private LayoutInflater inflater;
+        private ListView meetings;
+        private MeetingsAdapter meetingsAdapter;
 
         public VeranstaltungDetailFragment() {
 
@@ -289,17 +275,81 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
             TextView title = (TextView) rootView.findViewById(R.id.vaDetTitle);
             TextView location = (TextView) rootView.findViewById(R.id.vaDetLocation);
             TextView participants = (TextView) rootView.findViewById(R.id.vaDetTotal);
-            ListView meetings = (ListView) rootView.findViewById(R.id.vaDetList);
+            meetings = (ListView) rootView.findViewById(R.id.vaDetList);
+            registerForContextMenu(meetings);
 
             title.setText(event.getName());
             location.setText(event.getLocation());
             participants.setText(String.valueOf(eventDetail.getParticipants().size()));
-            MeetingsAdapter ma = new MeetingsAdapter(getContext());
-            meetings.setAdapter(ma);
+            meetingsAdapter = new MeetingsAdapter(getContext());
+            meetings.setAdapter(meetingsAdapter);
 
             return rootView;
         }
 
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.add("Löschen");
+        }
+
+        @Override
+        public boolean onContextItemSelected(MenuItem item) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            int listPosition = info.position;
+            meetingsAdapter.getItem(position);
+
+            progress.show();
+            RequestQueue queue = Volley.newRequestQueue(context);
+            String url = "http://37.221.196.48/thesis/public/meetings/delete";
+
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    progress.dismiss();
+                    Log.d(this.toString(),response);
+                    JSONObject ob = null;
+                    try {
+                        ob = new JSONObject(response);
+                        if(ob.has("success")) {
+                            if (ob.getBoolean("success")) {
+                                Toast.makeText(context,"Treffen gelöscht!",Toast.LENGTH_SHORT);
+                                reload();
+                            } else {
+                                ServerErrorDialog.show(context);
+                            }
+                            progress.dismiss();
+                        } else {
+                            ServerErrorDialog.show(context);
+                            ((Activity) context).finish();
+                        }
+                    } catch (Exception e) {
+                        ServerErrorDialog.show(context);
+                        e.printStackTrace();
+                        ((Activity) context).finish();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                }
+            }){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> map = new HashMap<>();
+                    map.put("token", Token.get(context));
+                    map.put("id", String.valueOf(eventDetail.getMeetings().get(position).getId()));
+                    return map;
+                }
+            };
+            queue.add(stringRequest);
+            return true;
+        }
+
+        /*
+                ----------------------  MEETINGS ADAPTER ---------------------------------------------------
+                */
         private static class MeetingsAdapter extends BaseAdapter {
             private Context context;
 
@@ -354,6 +404,10 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    ----------------------  VERANSTALTUNG BESUCHER ADAPTER -----------------------------------------
+    */
+
     public static class VeranstaltungDetailBesucherFragment extends Fragment {
         public View rootView;
         private ViewGroup container;
@@ -382,6 +436,9 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
             return rootView;
         }
 
+        /*
+        ----------------------  PARTICIPANTS ADAPTER -----------------------------------------------
+        */
         private static class ParticipantsAdapter extends BaseAdapter {
             private Context context;
 

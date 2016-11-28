@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_veranstaltung_treffen"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context="com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter.VeranstaltungTreffenActivity">
+
+    <!-- Dummy item to prevent AutoCompleteTextView from receiving focus -->
+    <LinearLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_width="0px"
+        android:layout_height="0px"/>
+
+    <!-- :nextFocusUp and :nextFocusLeft have been set to the id of this component
+    to prevent the dummy from receiving focus again -->
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="none"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:ems="10"
+        android:id="@+id/mAddDate"
+        android:windowSoftInputMode="stateHidden"
+        android:nextFocusUp="@id/mAddDate"
+        android:nextFocusLeft="@id/mAddDate"
+        android:editable="false"
+        android:hint="Datum" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="time"
+            android:ems="10"
+            android:layout_weight=".5"
+            android:id="@+id/mAddStarttime"
+            android:hint="Beginn (hh:mm)" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="time"
+            android:ems="10"
+            android:id="@+id/mAddEndtime"
+            android:layout_weight=".5"
+            android:hint="Ende (hh:mm)" />
+    </LinearLayout>
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:id="@+id/mAddRepeatGroup">
+
+        <RadioButton
+            android:text="Keine Wiederholung"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/mAddNorepeat"
+            android:layout_weight="1"
+            android:checked="true" />
+
+        <RadioButton
+            android:text="Jeden Tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mAddDaily"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:text="Jede Woche"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mAddWeekly"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:text="Alle 2 Wochen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mAddTwoweekly"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:text="Alle 4 Wochen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mAddFourweekly"
+            android:layout_weight="1" />
+    </RadioGroup>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/mAddRepeats"
+        android:hint="Anzahl der Wiederholungen" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:gravity="center_horizontal">
+
+        <Button
+            android:text="Hinzufügen"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/mAddButton"
+            android:layout_weight=".45"
+            android:elevation="0dp" />
+    </LinearLayout>
+
+</LinearLayout>

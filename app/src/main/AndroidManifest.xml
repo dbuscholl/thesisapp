@@ -38,7 +38,10 @@
         <activity
             android:name=".GUI.Activities.Veranstalter.VeranstaltungHinzufuegenActivity"
             android:label="Veranstaltung hinzufügen"
-            android:parentActivityName=".GUI.Activities.Veranstalter.VeranstalterActivity"></activity>
+            android:parentActivityName=".GUI.Activities.Veranstalter.VeranstalterActivity" />
+        <activity android:name=".GUI.Activities.Veranstalter.VeranstaltungTreffenActivity"
+            android:label="Treffen hinzufügen"
+            android:parentActivityName=".GUI.Activities.Veranstalter.VeranstaltungDetailActivity" />
     </application>
 
 </manifest>
