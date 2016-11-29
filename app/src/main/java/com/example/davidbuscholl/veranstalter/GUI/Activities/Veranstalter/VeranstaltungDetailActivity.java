@@ -98,7 +98,7 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 progress.dismiss();
-                Log.d(this.toString(), response);
+                Log.i(this.toString(), response);
                 JSONObject ob = null;
                 try {
                     ob = new JSONObject(response);
@@ -296,8 +296,7 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
         @Override
         public boolean onContextItemSelected(MenuItem item) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            int listPosition = info.position;
-            meetingsAdapter.getItem(position);
+            final int listPosition = info.position;
 
             progress.show();
             RequestQueue queue = Volley.newRequestQueue(context);
@@ -307,13 +306,13 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(String response) {
                     progress.dismiss();
-                    Log.d(this.toString(),response);
+                    Log.i(this.toString(),response);
                     JSONObject ob = null;
                     try {
                         ob = new JSONObject(response);
                         if(ob.has("success")) {
                             if (ob.getBoolean("success")) {
-                                Toast.makeText(context,"Treffen gelöscht!",Toast.LENGTH_SHORT);
+                                Toast.makeText(context,"Treffen gelöscht!",Toast.LENGTH_SHORT).show();
                                 reload();
                             } else {
                                 ServerErrorDialog.show(context);
@@ -339,7 +338,7 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> map = new HashMap<>();
                     map.put("token", Token.get(context));
-                    map.put("id", String.valueOf(eventDetail.getMeetings().get(position).getId()));
+                    map.put("id", String.valueOf(eventDetail.getMeetings().get(listPosition).getId()));
                     return map;
                 }
             };

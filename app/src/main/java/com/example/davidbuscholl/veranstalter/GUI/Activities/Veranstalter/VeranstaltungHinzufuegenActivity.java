@@ -147,7 +147,7 @@ public class VeranstaltungHinzufuegenActivity extends AppCompatActivity {
                     if(ob.has("success")) {
                         if (ob.getBoolean("success")) {
                             VeranstalterActivity.load(VeranstalterActivity.getContext());
-                            Toast.makeText(VeranstaltungHinzufuegenActivity.this,"Veranstaltung hinzugefügt!",Toast.LENGTH_SHORT);
+                            Toast.makeText(VeranstaltungHinzufuegenActivity.this,"Veranstaltung hinzugefügt!",Toast.LENGTH_SHORT).show();
                             finish();
                         } else {
                             if(ob.has("error")) ServerErrorDialog.show(VeranstaltungHinzufuegenActivity.this, ob.getString("error"));

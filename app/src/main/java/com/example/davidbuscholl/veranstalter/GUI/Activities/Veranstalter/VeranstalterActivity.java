@@ -204,30 +204,30 @@ public class VeranstalterActivity extends AppCompatActivity {
 
         progress.show();
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = "http://37.221.196.48/thesis/public/event/delete";
+        String url = "http://37.221.196.48/thesis/public/events/delete";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 progress.dismiss();
-                Log.d(this.toString(),response);
+                Log.i(this.toString(),response);
                 JSONObject ob = null;
                 try {
                     ob = new JSONObject(response);
                     if(ob.has("success")) {
                         if (ob.getBoolean("success")) {
-                            Toast.makeText(VeranstalterActivity.this,"Löschen erfolgreich",Toast.LENGTH_SHORT);
+                            Toast.makeText(VeranstalterActivity.this,"Löschen erfolgreich",Toast.LENGTH_SHORT).show();
                             load(VeranstalterActivity.this);
                         } else {
-                            ServerErrorDialog.show(context);
+                            if(ob.has("error")) ServerErrorDialog.show(context,ob.getString("error"));
                         }
                         progress.dismiss();
                     } else {
-                        ServerErrorDialog.show(context);
+                        Toast.makeText(VeranstalterActivity.this,"Unerwarteter Fehler",Toast.LENGTH_SHORT).show();
                         ((Activity) context).finish();
                     }
                 } catch (Exception e) {
-                    ServerErrorDialog.show(context);
+                    Toast.makeText(VeranstalterActivity.this,"Unerwarteter Fehler",Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                     ((Activity) context).finish();
                 }
