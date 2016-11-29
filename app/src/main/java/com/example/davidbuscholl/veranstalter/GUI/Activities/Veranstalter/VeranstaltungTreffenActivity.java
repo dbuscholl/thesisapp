@@ -41,6 +41,7 @@ import com.example.davidbuscholl.veranstalter.Helpers.Validation;
 import com.example.davidbuscholl.veranstalter.Helpers.ValidationRules;
 import com.example.davidbuscholl.veranstalter.R;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.ParseException;
@@ -167,7 +168,7 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
                     return;
                 }
 
-                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.GERMANY);
+                SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.GERMANY);
                 Date startdate;
                 Date enddate;
                 try {
@@ -176,7 +177,7 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
                     enddate = sdf.parse(date + " " + end);
                     if (startdate.compareTo(enddate) > 0) {
                         cal.setTime(enddate);
-                        cal.add(Calendar.DAY_OF_MONTH, -1);
+                        cal.add(Calendar.DAY_OF_MONTH, 1);
                         enddate = cal.getTime();
                     }
 
@@ -232,15 +233,28 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
 
                     final ProgressDialog progress = ProgressDialog.show(VeranstaltungTreffenActivity.this, "Ladevorgang", "Bitte warten...", true, false);
 
+                    sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.GERMANY);
+                    ArrayList<String> startdatesString = new ArrayList<String>();
+                    for(Date d : startdates) {
+                        startdatesString.add(sdf.format(d));
+                    }
+                    final JSONArray startdatesJson = new JSONArray(startdatesString);
+
+                    ArrayList<String> enddatesString = new ArrayList<String>();
+                    for(Date d : enddates) {
+                        enddatesString.add(sdf.format(d));
+                    }
+                    final JSONArray enddatesJson = new JSONArray(enddatesString);
+
                     progress.show();
                     RequestQueue queue = Volley.newRequestQueue(VeranstaltungTreffenActivity.this);
-                    String url = "http://37.221.196.48/thesis/public/meetings/create/" + eventId;
+                    String url = "http://37.221.196.48/thesis/public/meetings/create";
 
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
                             progress.dismiss();
-                            Log.d(this.toString(), response);
+                            Log.i("VeranstaltungTreffen", response);
                             JSONObject ob = null;
                             try {
                                 ob = new JSONObject(response);
@@ -253,13 +267,13 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
                                         ServerErrorDialog.show(VeranstaltungTreffenActivity.this);
                                     }
                                 } else {
-                                    ServerErrorDialog.show(VeranstaltungTreffenActivity.this);
                                     ((Activity) VeranstaltungTreffenActivity.this).finish();
+                                    ServerErrorDialog.show(VeranstaltungDetailActivity.context);
                                 }
                             } catch (Exception e) {
-                                ServerErrorDialog.show(VeranstaltungTreffenActivity.this);
                                 e.printStackTrace();
                                 ((Activity) VeranstaltungTreffenActivity.this).finish();
+                                ServerErrorDialog.show(VeranstaltungDetailActivity.context);
                             }
                         }
                     }, new Response.ErrorListener() {
@@ -273,6 +287,8 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
                             Map<String, String> map = new HashMap<>();
                             map.put("token", Token.get(VeranstaltungTreffenActivity.this));
                             map.put("id", String.valueOf(eventId));
+                            map.put("startdates", startdatesJson.toString());
+                            map.put("enddates", enddatesJson.toString());
                             return map;
                         }
                     };
