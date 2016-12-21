@@ -15,6 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.davidbuscholl.veranstalter.GUI.Activities.Teilnehmer.TeilnehmerActivity;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter.VeranstalterActivity;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter.VeranstaltungDetailActivity;
 import com.example.davidbuscholl.veranstalter.R;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 Log.d(this.toString(), response);
                 JSONObject ob = null;
+                progress.dismiss();
                 try {
                     ob = new JSONObject(response);
                     if (ob.has("success")) {
@@ -73,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             startActivityForResult(new Intent(MainActivity.this, LoginRegisterActivity.class), 1);
                         }
-                        progress.dismiss();
                     } else {
                         ServerErrorDialog.show(MainActivity.this);
                     }
@@ -99,12 +100,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void postLogin(Context context, JSONObject ob) throws JSONException {
+        JSONObject data = ob.getJSONObject("data");
+        User.setCurrent(new User(data));
         JSONArray roles = ob.getJSONArray("roles");
+
         if(roles.length()>0) {
             for(int i = 0; i < roles.length(); i++ ){
-                User.roles().add(Integer.parseInt(roles.getJSONObject(i).getString("rolleId")));
+                User.getCurrent().roles().add(Integer.parseInt(roles.getJSONObject(i).getString("rolleId")));
             }
-            int role = User.roles().get(0);
+            int role = User.getCurrent().roles().get(0);
             switch(role) {
                 case 1:
                     context.startActivity(new Intent(context,VeranstalterActivity.class));
@@ -113,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                     context.startActivity(new Intent(context,VeranstalterActivity.class));
                     break;
                 case 3:
-                    context.startActivity(new Intent(context,VeranstalterActivity.class));
+                    context.startActivity(new Intent(context,TeilnehmerActivity.class));
                     break;
             }
         }

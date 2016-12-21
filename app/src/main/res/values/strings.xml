@@ -17,4 +17,5 @@
         completions."
     </string>
     <string name="prompt_user">Benutzername</string>
+    <string name="title_activity_teilnehmer">Teilnehmer</string>
 </resources>

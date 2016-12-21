@@ -1,5 +1,8 @@
 package com.example.davidbuscholl.veranstalter.Entities;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 /**
@@ -11,6 +14,7 @@ public class Event {
 
     private String name;
     private String location;
+    private EventDetail detail;
 
     private int id;
 
@@ -87,5 +91,64 @@ public class Event {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public EventDetail getDetail() {
+        return detail;
+    }
+
+    public void setDetail(EventDetail detail) {
+        this.detail = detail;
+    }
+
+    public int getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(int participants) {
+        this.participants = participants;
+    }
+
+    public void detailFromJsonObject(JSONObject ob) {
+        EventDetail eventDetail = new EventDetail();
+        try {
+            eventDetail.setId(Integer.parseInt(ob.getJSONObject("data").getString("id")));
+            eventDetail.setTitle(ob.getJSONObject("data").getString("name"));
+            eventDetail.setLocation(ob.getJSONObject("data").getString("adresse"));
+
+            ArrayList<Participant> part = new ArrayList<>();
+            JSONArray jsonpart = ob.getJSONArray("participants");
+            for (int j = 0; j < jsonpart.length(); j++) {
+                JSONObject p = jsonpart.getJSONObject(j);
+                part.add(new Participant(Integer.parseInt(p.getString("id")), p.getString("username"), p.getString("vorname"), p.getString("nachname"), p.getString("adresse")));
+            }
+            eventDetail.setParticipants(part);
+
+            ArrayList<Refuse> refuses = new ArrayList<>();
+            JSONArray jsonref = ob.getJSONArray("refuses");
+            for (int j = 0; j < jsonref.length(); j++) {
+                JSONObject r = jsonref.getJSONObject(j);
+                refuses.add(new Refuse(Integer.parseInt(r.getString("personenId")), Integer.parseInt(r.getString("treffenId"))));
+            }
+
+            ArrayList<Meeting> meetings = new ArrayList<>();
+            JSONArray jsonmeet = ob.getJSONArray("meetings");
+            for (int j = 0; j < jsonmeet.length(); j++) {
+                JSONObject m = jsonmeet.getJSONObject(j);
+                Meeting meeting = new Meeting(Integer.parseInt(m.getString("angebotId")), Integer.parseInt(m.getString("id")), m.getString("datumStart"), m.getString("datumEnde"));
+                for (Refuse r : refuses) {
+                    if (r.getMeeting() == meeting.getId()) {
+                        meeting.getRefuses().add(r);
+                    }
+                }
+                meetings.add(meeting);
+            }
+            eventDetail.setMeetings(meetings);
+            setDetail(eventDetail);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

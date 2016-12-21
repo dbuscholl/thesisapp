@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -85,6 +87,7 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
         progress.setTitle("Ladevorgang");
         progress.setMessage("Bitte warten...");
         progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
 
         loadEventExtras(context);
 
@@ -104,7 +107,8 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
                     ob = new JSONObject(response);
                     if (ob.has("success")) {
                         if (ob.getBoolean("success")) {
-                            createEventDetail(ob);
+                            event.detailFromJsonObject(ob);
+                            eventDetail = event.getDetail();
 
                             Toolbar toolbar = (Toolbar) context.findViewById(R.id.toolbar);
                             context.setSupportActionBar(toolbar);
@@ -148,7 +152,7 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    private static void createEventDetail(JSONObject ob) {
+    /*private static void createEventDetail(JSONObject ob) {
         eventDetail = new EventDetail();
         try {
             eventDetail.setId(Integer.parseInt(ob.getJSONObject("data").getString("id")));
@@ -186,7 +190,7 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     public static void reload() {
         Intent i = new Intent(context,VeranstaltungDetailActivity.class);
@@ -275,12 +279,23 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
             TextView title = (TextView) rootView.findViewById(R.id.vaDetTitle);
             TextView location = (TextView) rootView.findViewById(R.id.vaDetLocation);
             TextView participants = (TextView) rootView.findViewById(R.id.vaDetTotal);
+            TextView id = (TextView) rootView.findViewById(R.id.vaDetId);
+            final ImageView connect = (ImageView) rootView.findViewById(R.id.vaDetConnect);
             meetings = (ListView) rootView.findViewById(R.id.vaDetList);
             registerForContextMenu(meetings);
 
             title.setText(event.getName());
             location.setText(event.getLocation());
             participants.setText(String.valueOf(eventDetail.getParticipants().size()));
+            id.setText(String.valueOf(event.getId()));
+            View.OnClickListener ocl = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(context,"Identifikationsnummer für TeilnehmerActivity zum abonnieren.", Toast.LENGTH_LONG).show();
+                }
+            };
+            connect.setOnClickListener(ocl);
+            id.setOnClickListener(ocl);
             meetingsAdapter = new MeetingsAdapter(getContext());
             meetings.setAdapter(meetingsAdapter);
 
@@ -404,7 +419,7 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
     }
 
     /*
-    ----------------------  VERANSTALTUNG BESUCHER ADAPTER -----------------------------------------
+    ----------------------  VERANSTALTUNG BESUCHER FRAGMENT ----------------------------------------
     */
 
     public static class VeranstaltungDetailBesucherFragment extends Fragment {

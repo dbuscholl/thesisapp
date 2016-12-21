@@ -1,4 +1,4 @@
-package com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter;
+package com.example.davidbuscholl.veranstalter.GUI.Activities;
 
 import android.content.Context;
 import android.view.LayoutInflater;

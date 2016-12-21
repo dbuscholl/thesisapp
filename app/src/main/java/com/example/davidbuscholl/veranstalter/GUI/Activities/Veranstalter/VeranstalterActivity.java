@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -30,7 +27,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.davidbuscholl.veranstalter.Entities.Event;
 import com.example.davidbuscholl.veranstalter.Entities.User;
+import com.example.davidbuscholl.veranstalter.GUI.Activities.EventListAdapter;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.LoginRegisterActivity;
+import com.example.davidbuscholl.veranstalter.GUI.Activities.Teilnehmer.TeilnehmerActivity;
 import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
 import com.example.davidbuscholl.veranstalter.Helpers.Token;
 import com.example.davidbuscholl.veranstalter.R;
@@ -81,12 +80,12 @@ public class VeranstalterActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        if(User.roles().indexOf(2)==-1) {
-            menu.findItem(R.id.action_divers).setVisible(false);
+        getMenuInflater().inflate(R.menu.menu_veranstalter, menu);
+        if(User.getCurrent().roles().indexOf(2)==-1) {
+            menu.findItem(R.id.action_organizer_divers).setVisible(false);
         }
-        if(User.roles().indexOf(3)==-1) {
-            menu.findItem(R.id.action_participants).setVisible(false);
+        if(User.getCurrent().roles().indexOf(3)==-1) {
+            menu.findItem(R.id.action_organizer_participants).setVisible(false);
         }
         return true;
     }
@@ -99,52 +98,14 @@ public class VeranstalterActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            progress.show();
-            RequestQueue queue = Volley.newRequestQueue(this);
-            String url = "http://37.221.196.48/thesis/public/user/logout";
-
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.d(this.toString(),response);
-                    JSONObject ob = null;
-                    try {
-                        ob = new JSONObject(response);
-                        if(ob.has("success")) {
-                            if (ob.getBoolean("success")) {
-                                startActivity(new Intent(getApplicationContext(), LoginRegisterActivity.class));
-                                finish();
-                            } else {
-                                ServerErrorDialog.show(VeranstalterActivity.this);
-                            }
-                            progress.dismiss();
-                        } else {
-                            ServerErrorDialog.show(VeranstalterActivity.this);
-                            finish();
-                        }
-                    } catch (Exception e) {
-                        ServerErrorDialog.show(VeranstalterActivity.this);
-                        e.printStackTrace();
-                        finish();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    error.printStackTrace();
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> map = new HashMap<>();
-                    map.put("token",prefs.getString("token","0"));
-                    return map;
-                }
-            };
-            queue.add(stringRequest);
-
+        if (id == R.id.action_organizer_logout) {
+            User.getCurrent().logout(context);
             return true;
+        }
+
+        if(id == R.id.action_organizer_participants) {
+            context.startActivity(new Intent(context,TeilnehmerActivity.class));
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

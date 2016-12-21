@@ -39,9 +39,19 @@
             android:name=".GUI.Activities.Veranstalter.VeranstaltungHinzufuegenActivity"
             android:label="Veranstaltung hinzufügen"
             android:parentActivityName=".GUI.Activities.Veranstalter.VeranstalterActivity" />
-        <activity android:name=".GUI.Activities.Veranstalter.VeranstaltungTreffenActivity"
+        <activity
+            android:name=".GUI.Activities.Veranstalter.VeranstaltungTreffenActivity"
             android:label="Treffen hinzufügen"
             android:parentActivityName=".GUI.Activities.Veranstalter.VeranstaltungDetailActivity" />
+        <activity
+            android:name=".GUI.Activities.Teilnehmer.TeilnehmerActivity"
+            android:label="@string/title_activity_teilnehmer"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".GUI.Activities.Teilnehmer.TeilnehmerDetailActivity"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>
