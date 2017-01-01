@@ -73,7 +73,6 @@ public class TeilnehmerDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_teilnehmer_detail);
 
         context = this;
         applicationContext = getApplicationContext();
@@ -91,24 +90,26 @@ public class TeilnehmerDetailActivity extends AppCompatActivity {
         }
         event = Event.get(position);
 
-        title = (TextView) findViewById(R.id.teDetTitle);
-        location = (TextView) findViewById(R.id.teDetLocation);
-        total = (TextView) findViewById(R.id.teDetTotal);
-        list = (ListView) findViewById(R.id.teDetList);
-
         loadEventExtras();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private void loadEventExtras() {
+
+        progress.show();
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = "http://37.221.196.48/thesis/public/events/" + event.getId() + "/details";
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                setContentView(R.layout.activity_teilnehmer_detail);
+                setTitle("Detailansicht");
+
+                title = (TextView) findViewById(R.id.teDetTitle);
+                location = (TextView) findViewById(R.id.teDetLocation);
+                total = (TextView) findViewById(R.id.teDetTotal);
+                list = (ListView) findViewById(R.id.teDetList);
+
                 progress.dismiss();
                 Log.i(this.toString(), response);
                 JSONObject ob = null;
@@ -143,42 +144,6 @@ public class TeilnehmerDetailActivity extends AppCompatActivity {
             }
         });
         queue.add(stringRequest);
-    }
-
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("TeilnehmerDetail Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
     }
 
     private static class MeetingsListAdapter extends BaseAdapter {

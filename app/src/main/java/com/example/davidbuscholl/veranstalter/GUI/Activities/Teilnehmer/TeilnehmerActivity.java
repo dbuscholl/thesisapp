@@ -3,19 +3,23 @@ package com.example.davidbuscholl.veranstalter.GUI.Activities.Teilnehmer;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.android.volley.Request;
@@ -47,22 +51,15 @@ public class TeilnehmerActivity extends AppCompatActivity {
     private static Context context;
     private static Context applicationContext;
     private static ProgressDialog progress;
+    private String m_Text = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teilnehmer);
+        setTitle("Angemeldete Veranstaltungen");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         progress = new ProgressDialog(this);
         progress.setTitle("Ladevorgang");
@@ -73,7 +70,77 @@ public class TeilnehmerActivity extends AppCompatActivity {
         context = this;
         applicationContext = getApplicationContext();
 
-        RequestQueue queue = Volley.newRequestQueue(this);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Title");
+
+// Set up the input
+                final EditText input = new EditText(context);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                input.setInputType(InputType.TYPE_CLASS_NUMBER);
+                builder.setView(input);
+
+// Set up the buttons
+                builder.setPositiveButton("Hinzufügen", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        m_Text = input.getText().toString();
+                        if(m_Text.trim().length() == 0) {
+                            ServerErrorDialog.show(context,"Keinen Text eingegeben.");
+                            return;
+                        }
+                        progress.show();
+                        RequestQueue queue = Volley.newRequestQueue(context);
+                        String url = "http://37.221.196.48/thesis/public/event/register/" + m_Text.trim() + "?token=" + Token.get(context);
+
+                        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                progress.dismiss();
+                                Log.i(this.toString(), response);
+                                JSONObject ob = null;
+                                try {
+                                    ob = new JSONObject(response);
+                                    if (ob.has("success")) {
+                                        if (ob.getBoolean("success")) {
+                                            EventListAdapter ela = new EventListAdapter(context, ob.getJSONArray("events"));
+                                            list.setAdapter(ela);
+                                            list.setOnItemClickListener(new ClickListener());
+                                        } else {
+                                            ServerErrorDialog.show(context,ob.getString("error"));
+                                        }
+                                    } else {
+                                        ServerErrorDialog.show(context);
+                                    }
+                                } catch (Exception e) {
+                                    ServerErrorDialog.show(context);
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                error.printStackTrace();
+                            }
+                        });
+                        queue.add(stringRequest);
+                    }
+                });
+                builder.setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+            }
+        });
+
+               RequestQueue queue = Volley.newRequestQueue(this);
         String url = "http://37.221.196.48/thesis/public/user/participating?token=" + Token.get(this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
@@ -88,10 +155,9 @@ public class TeilnehmerActivity extends AppCompatActivity {
                         if (ob.getBoolean("success")) {
                             EventListAdapter ela = new EventListAdapter(context, ob.getJSONArray("events"));
                             list.setAdapter(ela);
-                            final JSONObject finalOb = ob;
                             list.setOnItemClickListener(new ClickListener());
                         } else {
-                            ServerErrorDialog.show(getApplicationContext());
+                            ServerErrorDialog.show(getApplicationContext(),ob.getString("error"));
                         }
                     } else {
                         ServerErrorDialog.show(getApplicationContext());

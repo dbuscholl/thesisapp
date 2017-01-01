@@ -33,7 +33,7 @@
         </activity>
         <activity
             android:name=".GUI.Activities.Veranstalter.VeranstalterActivity"
-            android:label="Veranstaltungen"
+            android:label="Eigene Veranstaltungen"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".GUI.Activities.Veranstalter.VeranstaltungHinzufuegenActivity"
@@ -45,10 +45,10 @@
             android:parentActivityName=".GUI.Activities.Veranstalter.VeranstaltungDetailActivity" />
         <activity
             android:name=".GUI.Activities.Teilnehmer.TeilnehmerActivity"
-            android:label="@string/title_activity_teilnehmer"
+            android:label="Angemeldete Veranstaltungen"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".GUI.Activities.Teilnehmer.TeilnehmerDetailActivity"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <activity android:name=".GUI.Activities.Teilnehmer.TeilnehmerDetailActivity"
+            android:label="Angemeldete Veranstaltungen" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
