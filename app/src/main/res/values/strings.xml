@@ -18,4 +18,6 @@
     </string>
     <string name="prompt_user">Benutzername</string>
     <string name="title_activity_teilnehmer">Teilnehmer</string>
+    <string name="title_activity_fahrer">FahrerActivity</string>
+    <string name="title_activity_fahrer_detail">FahrerDetail</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.davidbuscholl.veranstalter.GUI.Activities.Teilnehmer;
+package com.example.davidbuscholl.veranstalter.GUI.Activities.Fahrer;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -29,7 +30,8 @@ import com.android.volley.toolbox.Volley;
 import com.example.davidbuscholl.veranstalter.Entities.Event;
 import com.example.davidbuscholl.veranstalter.Entities.User;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.EventListAdapter;
-import com.example.davidbuscholl.veranstalter.GUI.Activities.Fahrer.FahrerActivity;
+import com.example.davidbuscholl.veranstalter.GUI.Activities.Teilnehmer.TeilnehmerActivity;
+import com.example.davidbuscholl.veranstalter.GUI.Activities.Teilnehmer.TeilnehmerDetailActivity;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter.VeranstalterActivity;
 import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
 import com.example.davidbuscholl.veranstalter.Helpers.Token;
@@ -37,31 +39,27 @@ import com.example.davidbuscholl.veranstalter.R;
 
 import org.json.JSONObject;
 
-public class TeilnehmerActivity extends AppCompatActivity {
+public class FahrerActivity extends AppCompatActivity {
+    private ProgressDialog progress;
     private static Context context;
-    private static Context applicationContext;
-    private static ProgressDialog progress;
-    private String m_Text = "";
+    private String m_Text;
     private ListView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_teilnehmer);
-        setTitle("Angemeldete Veranstaltungen");
+        setContentView(R.layout.activity_fahrer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        context = this;
         progress = new ProgressDialog(this);
         progress.setTitle("Ladevorgang");
         progress.setMessage("Bitte warten...");
-        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.setCancelable(false);
 
-        list = (ListView) findViewById(R.id.tePartList);
+        list = (ListView) findViewById(R.id.driEventList);
         registerForContextMenu(list);
-
-        context = this;
-        applicationContext = getApplicationContext();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -84,7 +82,7 @@ public class TeilnehmerActivity extends AppCompatActivity {
                         }
                         progress.show();
                         RequestQueue queue = Volley.newRequestQueue(context);
-                        String url = "http://37.221.196.48/thesis/public/event/" + m_Text.trim() + "/register?token=" + Token.get(context);
+                        String url = "http://37.221.196.48/thesis/public/event/" + m_Text.trim() + "/registerDriver?token=" + Token.get(context);
 
                         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
                             @Override
@@ -96,9 +94,7 @@ public class TeilnehmerActivity extends AppCompatActivity {
                                     ob = new JSONObject(response);
                                     if (ob.has("success")) {
                                         if (ob.getBoolean("success")) {
-                                            EventListAdapter ela = new EventListAdapter(context, ob.getJSONArray("events"));
-                                            list.setAdapter(ela);
-                                            list.setOnItemClickListener(new ClickListener());
+                                            load();
                                         } else {
                                             ServerErrorDialog.show(context, ob.getString("error"));
                                         }
@@ -129,14 +125,52 @@ public class TeilnehmerActivity extends AppCompatActivity {
                 builder.show();
             }
         });
+    }
 
-        load();
+
+    public void load() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "http://37.221.196.48/thesis/public/user/driving?token=" + Token.get(this);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                progress.dismiss();
+                Log.i(this.toString(), response);
+                JSONObject ob = null;
+                try {
+                    ob = new JSONObject(response);
+                    if (ob.has("success")) {
+                        if (ob.getBoolean("success")) {
+                            EventListAdapter ela = new EventListAdapter(context, ob.getJSONArray("events"));
+                            list.setAdapter(ela);
+                            list.setOnItemClickListener(new FahrerActivity.ClickListener());
+                        } else {
+                            ServerErrorDialog.show(getApplicationContext(), ob.getString("error"));
+                        }
+                    } else {
+                        ServerErrorDialog.show(getApplicationContext());
+                        finish();
+                    }
+                } catch (Exception e) {
+                    ServerErrorDialog.show(getApplicationContext());
+                    e.printStackTrace();
+                    finish();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        queue.add(stringRequest);
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        if (v.getId() == R.id.tePartList) {
+        if (v.getId() == R.id.driEventList) {
             MenuInflater inflater = getMenuInflater();
             inflater.inflate(R.menu.menu_veranstaltungslist, menu);
         }
@@ -152,7 +186,7 @@ public class TeilnehmerActivity extends AppCompatActivity {
                 progress.show();
 
                 RequestQueue queue = Volley.newRequestQueue(this);
-                String url = "http://37.221.196.48/thesis/public/event/" + id + "/unregister?token=" + Token.get(this);
+                String url = "http://37.221.196.48/thesis/public/event/" + id + "/unregisterDriver?token=" + Token.get(this);
 
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
                     @Override
@@ -194,12 +228,12 @@ public class TeilnehmerActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_teilnehmer, menu);
+        getMenuInflater().inflate(R.menu.menu_driver, menu);
         if (User.getCurrent().roles().indexOf(1) == -1) {
-            menu.findItem(R.id.action_parti_organizer).setVisible(false);
+            menu.findItem(R.id.action_driver_organizer).setVisible(false);
         }
-        if (User.getCurrent().roles().indexOf(2) == -1) {
-            menu.findItem(R.id.action_parti_divers).setVisible(false);
+        if (User.getCurrent().roles().indexOf(3) == -1) {
+            menu.findItem(R.id.action_driver_parti).setVisible(false);
         }
         return true;
     }
@@ -212,71 +246,31 @@ public class TeilnehmerActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_parti_logout) {
+        if (id == R.id.action_driver_logout) {
             User.getCurrent().logout(context);
             return true;
         }
 
-        if (id == R.id.action_parti_organizer) {
+        if (id == R.id.action_driver_organizer) {
             context.startActivity(new Intent(context, VeranstalterActivity.class));
             finish();
         }
 
-        if (id == R.id.action_parti_divers) {
-            context.startActivity(new Intent(context, FahrerActivity.class));
+        if (id == R.id.action_driver_parti) {
+            context.startActivity(new Intent(context, TeilnehmerActivity.class));
             finish();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void load() {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://37.221.196.48/thesis/public/user/participating?token=" + Token.get(this);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                progress.dismiss();
-                Log.i(this.toString(), response);
-                JSONObject ob = null;
-                try {
-                    ob = new JSONObject(response);
-                    if (ob.has("success")) {
-                        if (ob.getBoolean("success")) {
-                            EventListAdapter ela = new EventListAdapter(context, ob.getJSONArray("events"));
-                            list.setAdapter(ela);
-                            list.setOnItemClickListener(new ClickListener());
-                        } else {
-                            ServerErrorDialog.show(getApplicationContext(), ob.getString("error"));
-                        }
-                    } else {
-                        ServerErrorDialog.show(getApplicationContext());
-                        finish();
-                    }
-                } catch (Exception e) {
-                    ServerErrorDialog.show(getApplicationContext());
-                    e.printStackTrace();
-                    finish();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        });
-        queue.add(stringRequest);
-    }
-
     private static class ClickListener implements AdapterView.OnItemClickListener {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            final Intent i = new Intent(context, TeilnehmerDetailActivity.class);
+            final Intent i = new Intent(context, FahrerDetailActivity.class);
             i.putExtra("event", position);
             context.startActivity(i);
         }
     }
-
 }

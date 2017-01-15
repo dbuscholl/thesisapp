@@ -28,6 +28,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.davidbuscholl.veranstalter.Entities.Event;
 import com.example.davidbuscholl.veranstalter.Entities.User;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.EventListAdapter;
+import com.example.davidbuscholl.veranstalter.GUI.Activities.Fahrer.FahrerActivity;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.LoginRegisterActivity;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.Teilnehmer.TeilnehmerActivity;
 import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
@@ -106,6 +107,11 @@ public class VeranstalterActivity extends AppCompatActivity {
 
         if(id == R.id.action_organizer_participants) {
             context.startActivity(new Intent(context,TeilnehmerActivity.class));
+            finish();
+        }
+
+        if(id == R.id.action_organizer_divers) {
+            context.startActivity(new Intent(context,FahrerActivity.class));
             finish();
         }
 

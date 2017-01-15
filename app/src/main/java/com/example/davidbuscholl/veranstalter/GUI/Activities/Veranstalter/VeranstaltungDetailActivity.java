@@ -152,46 +152,6 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    /*private static void createEventDetail(JSONObject ob) {
-        eventDetail = new EventDetail();
-        try {
-            eventDetail.setId(Integer.parseInt(ob.getJSONObject("data").getString("id")));
-            eventDetail.setTitle(ob.getJSONObject("data").getString("name"));
-            eventDetail.setLocation(ob.getJSONObject("data").getString("adresse"));
-
-            ArrayList<Participant> part = new ArrayList<>();
-            JSONArray jsonpart = ob.getJSONArray("participants");
-            for (int i = 0; i < jsonpart.length(); i++) {
-                JSONObject p = jsonpart.getJSONObject(i);
-                part.add(new Participant(Integer.parseInt(p.getString("id")), p.getString("username"), p.getString("vorname"), p.getString("nachname"), p.getString("adresse")));
-            }
-            eventDetail.setParticipants(part);
-
-            ArrayList<Refuse> refuses = new ArrayList<>();
-            JSONArray jsonref = ob.getJSONArray("refuses");
-            for (int i = 0; i < jsonref.length(); i++) {
-                JSONObject r = jsonref.getJSONObject(i);
-                refuses.add(new Refuse(Integer.parseInt(r.getString("personenId")), Integer.parseInt(r.getString("treffenId"))));
-            }
-
-            ArrayList<Meeting> meetings = new ArrayList<>();
-            JSONArray jsonmeet = ob.getJSONArray("meetings");
-            for (int i = 0; i < jsonmeet.length(); i++) {
-                JSONObject m = jsonmeet.getJSONObject(i);
-                Meeting meeting = new Meeting(Integer.parseInt(m.getString("angebotId")), Integer.parseInt(m.getString("id")), m.getString("datumStart"), m.getString("datumEnde"));
-                for (Refuse r : refuses) {
-                    if (r.getMeeting() == meeting.getId()) {
-                        meeting.getRefuses().add(r);
-                    }
-                }
-                meetings.add(meeting);
-            }
-            eventDetail.setMeetings(meetings);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
     public static void reload() {
         Intent i = new Intent(context,VeranstaltungDetailActivity.class);
         i.putExtra("event",position);

@@ -47,11 +47,22 @@
             android:name=".GUI.Activities.Teilnehmer.TeilnehmerActivity"
             android:label="Angemeldete Veranstaltungen"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".GUI.Activities.Teilnehmer.TeilnehmerDetailActivity"
+        <activity
+            android:name=".GUI.Activities.Teilnehmer.TeilnehmerDetailActivity"
             android:label="Angemeldete Veranstaltungen" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".GUI.Activities.Fahrer.FahrerActivity"
+            android:label="Auftragsliste"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".GUI.Activities.Fahrer.FahrerDetailActivity"
+            android:label="@string/title_activity_fahrer_detail"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
