@@ -41,18 +41,15 @@ import com.example.davidbuscholl.veranstalter.Entities.Event;
 import com.example.davidbuscholl.veranstalter.Entities.EventDetail;
 import com.example.davidbuscholl.veranstalter.Entities.Meeting;
 import com.example.davidbuscholl.veranstalter.Entities.Participant;
-import com.example.davidbuscholl.veranstalter.Entities.Refuse;
 import com.example.davidbuscholl.veranstalter.Helpers.Token;
 import com.example.davidbuscholl.veranstalter.R;
-import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
+import com.example.davidbuscholl.veranstalter.GUI.Fragments.ServerErrorDialog;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

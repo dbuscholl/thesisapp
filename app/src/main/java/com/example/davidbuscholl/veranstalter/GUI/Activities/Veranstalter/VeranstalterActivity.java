@@ -29,9 +29,8 @@ import com.example.davidbuscholl.veranstalter.Entities.Event;
 import com.example.davidbuscholl.veranstalter.Entities.User;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.EventListAdapter;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.Fahrer.FahrerActivity;
-import com.example.davidbuscholl.veranstalter.GUI.Activities.LoginRegisterActivity;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.Teilnehmer.TeilnehmerActivity;
-import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
+import com.example.davidbuscholl.veranstalter.GUI.Fragments.ServerErrorDialog;
 import com.example.davidbuscholl.veranstalter.Helpers.Token;
 import com.example.davidbuscholl.veranstalter.R;
 
@@ -126,7 +125,7 @@ public class VeranstalterActivity extends AppCompatActivity {
         progress.show();
 
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = "http://37.221.196.48/thesis/public/user/events?token=" + Token.get(context);
+        String url = "http://37.221.196.48/thesis/public/events?token=" + Token.get(context);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override

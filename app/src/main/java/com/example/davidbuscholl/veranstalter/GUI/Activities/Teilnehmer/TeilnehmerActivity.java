@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -31,11 +32,17 @@ import com.example.davidbuscholl.veranstalter.Entities.User;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.EventListAdapter;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.Fahrer.FahrerActivity;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter.VeranstalterActivity;
-import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
+import com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter.VeranstaltungHinzufuegenActivity;
+import com.example.davidbuscholl.veranstalter.GUI.Fragments.AddressAutoComplete;
+import com.example.davidbuscholl.veranstalter.GUI.Fragments.AddressChosenInterface;
+import com.example.davidbuscholl.veranstalter.GUI.Fragments.ServerErrorDialog;
 import com.example.davidbuscholl.veranstalter.Helpers.Token;
 import com.example.davidbuscholl.veranstalter.R;
 
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TeilnehmerActivity extends AppCompatActivity {
     private static Context context;
@@ -84,7 +91,7 @@ public class TeilnehmerActivity extends AppCompatActivity {
                         }
                         progress.show();
                         RequestQueue queue = Volley.newRequestQueue(context);
-                        String url = "http://37.221.196.48/thesis/public/event/" + m_Text.trim() + "/register?token=" + Token.get(context);
+                        String url = "http://37.221.196.48/thesis/public/events/" + m_Text.trim() + "/register?token=" + Token.get(context);
 
                         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
                             @Override
@@ -152,7 +159,7 @@ public class TeilnehmerActivity extends AppCompatActivity {
                 progress.show();
 
                 RequestQueue queue = Volley.newRequestQueue(this);
-                String url = "http://37.221.196.48/thesis/public/event/" + id + "/unregister?token=" + Token.get(this);
+                String url = "http://37.221.196.48/thesis/public/events/" + id + "/unregister?token=" + Token.get(this);
 
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
                     @Override
@@ -232,7 +239,7 @@ public class TeilnehmerActivity extends AppCompatActivity {
 
     public void load() {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://37.221.196.48/thesis/public/user/participating?token=" + Token.get(this);
+        String url = "http://37.221.196.48/thesis/public/participating?token=" + Token.get(this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -247,15 +254,18 @@ public class TeilnehmerActivity extends AppCompatActivity {
                             EventListAdapter ela = new EventListAdapter(context, ob.getJSONArray("events"));
                             list.setAdapter(ela);
                             list.setOnItemClickListener(new ClickListener());
+                            if (User.getCurrent().getAdresse().equals("")) {
+                                askAdress();
+                            }
                         } else {
-                            ServerErrorDialog.show(getApplicationContext(), ob.getString("error"));
+                            ServerErrorDialog.show(context, ob.getString("error"));
                         }
                     } else {
-                        ServerErrorDialog.show(getApplicationContext());
+                        ServerErrorDialog.show(context);
                         finish();
                     }
                 } catch (Exception e) {
-                    ServerErrorDialog.show(getApplicationContext());
+                    ServerErrorDialog.show(context);
                     e.printStackTrace();
                     finish();
                 }
@@ -267,6 +277,85 @@ public class TeilnehmerActivity extends AppCompatActivity {
             }
         });
         queue.add(stringRequest);
+    }
+
+    private void askAdress() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Deine Adresse ist noch nicht hinterlegt. Bitte gib sie hier ein!.");
+
+        final EditText input = new EditText(context);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.setPositiveButton("Hinzufügen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                m_Text = input.getText().toString();
+                if (m_Text.trim().length() == 0) {
+                    ServerErrorDialog.show(context, "Keinen Text eingegeben.");
+                    return;
+                }
+
+                AddressAutoComplete.show(context, m_Text, new AddressChosenInterface() {
+                    @Override
+                    public void onAddressChosen(final String chosen) {
+                        progress.show();
+
+                        RequestQueue queue = Volley.newRequestQueue(context);
+                        String url = "http://37.221.196.48/thesis/public/user/update";
+
+                        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                progress.dismiss();
+                                Log.i(this.toString(), response);
+                                JSONObject ob = null;
+                                try {
+                                    ob = new JSONObject(response);
+                                    if (ob.has("success")) {
+                                        if (ob.getBoolean("success")) {
+                                            User.getCurrent().setAdresse(chosen);
+                                            ServerErrorDialog.show(context,"Adresse wurde hinterlegt!");
+                                        } else {
+                                            ServerErrorDialog.show(context, ob.getString("error"));
+                                        }
+                                    } else {
+                                        ServerErrorDialog.show(context);
+                                        finish();
+                                    }
+                                } catch (Exception e) {
+                                    ServerErrorDialog.show(context);
+                                    e.printStackTrace();
+                                    finish();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                error.printStackTrace();
+                            }
+                        }){
+                            @Override
+                            protected Map<String, String> getParams() throws AuthFailureError {
+                                Map<String, String> map = new HashMap<>();
+                                map.put("adresse",chosen);
+                                map.put("token", Token.get(context));
+                                return map;
+                            }
+                        };
+                        queue.add(stringRequest);
+                    }
+                });
+            }
+        });
+        builder.show();
     }
 
     private static class ClickListener implements AdapterView.OnItemClickListener {

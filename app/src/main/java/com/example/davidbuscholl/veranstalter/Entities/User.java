@@ -14,8 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.LoginRegisterActivity;
-import com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter.VeranstalterActivity;
-import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
+import com.example.davidbuscholl.veranstalter.GUI.Fragments.ServerErrorDialog;
 import com.example.davidbuscholl.veranstalter.Helpers.Token;
 
 import org.json.JSONObject;

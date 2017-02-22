@@ -4,21 +4,15 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
+
 import android.support.v4.app.NavUtils;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -34,8 +28,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.davidbuscholl.veranstalter.Entities.Event;
-import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
+import com.example.davidbuscholl.veranstalter.GUI.Fragments.ServerErrorDialog;
 import com.example.davidbuscholl.veranstalter.Helpers.Token;
 import com.example.davidbuscholl.veranstalter.Helpers.Validation;
 import com.example.davidbuscholl.veranstalter.Helpers.ValidationRules;
@@ -248,7 +241,7 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
 
                     progress.show();
                     RequestQueue queue = Volley.newRequestQueue(VeranstaltungTreffenActivity.this);
-                    String url = "http://37.221.196.48/thesis/public/meetings/create";
+                    String url = "http://37.221.196.48/thesis/public/meetings";
 
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                         @Override

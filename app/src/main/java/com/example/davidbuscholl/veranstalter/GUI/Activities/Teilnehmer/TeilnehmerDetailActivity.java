@@ -5,8 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.Image;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -29,29 +26,18 @@ import com.android.volley.toolbox.Volley;
 import com.example.davidbuscholl.veranstalter.Entities.Event;
 import com.example.davidbuscholl.veranstalter.Entities.EventDetail;
 import com.example.davidbuscholl.veranstalter.Entities.Meeting;
-import com.example.davidbuscholl.veranstalter.Entities.Participant;
 import com.example.davidbuscholl.veranstalter.Entities.Refuse;
 import com.example.davidbuscholl.veranstalter.Entities.User;
-import com.example.davidbuscholl.veranstalter.GUI.Activities.LoginRegisterActivity;
-import com.example.davidbuscholl.veranstalter.GUI.Activities.MainActivity;
-import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
+import com.example.davidbuscholl.veranstalter.GUI.Fragments.ServerErrorDialog;
 import com.example.davidbuscholl.veranstalter.Helpers.Token;
 import com.example.davidbuscholl.veranstalter.R;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter.VeranstaltungDetailActivity.context;
 
 public class TeilnehmerDetailActivity extends AppCompatActivity {
     private static Context context;
@@ -239,7 +225,7 @@ public class TeilnehmerDetailActivity extends AppCompatActivity {
 
                 progress.show();
                 RequestQueue queue = Volley.newRequestQueue(TeilnehmerDetailActivity.context);
-                String url = "http://37.221.196.48/thesis/public/user/participating/accept/" + meeting + "?token=" + Token.get(TeilnehmerDetailActivity.context);
+                String url = "http://37.221.196.48/thesis/public/participating/accept/" + meeting + "?token=" + Token.get(TeilnehmerDetailActivity.context);
 
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
                     @Override
@@ -297,7 +283,7 @@ public class TeilnehmerDetailActivity extends AppCompatActivity {
 
                 progress.show();
                 RequestQueue queue = Volley.newRequestQueue(TeilnehmerDetailActivity.context);
-                String url = "http://37.221.196.48/thesis/public/user/participating/refuse/" + meeting + "?token=" + Token.get(TeilnehmerDetailActivity.context);
+                String url = "http://37.221.196.48/thesis/public/participating/refuse/" + meeting + "?token=" + Token.get(TeilnehmerDetailActivity.context);
 
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
                     @Override

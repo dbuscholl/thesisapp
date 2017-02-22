@@ -31,7 +31,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.davidbuscholl.veranstalter.R;
 import com.example.davidbuscholl.veranstalter.Helpers.ValidationRules;
-import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
+import com.example.davidbuscholl.veranstalter.GUI.Fragments.ServerErrorDialog;
 import com.example.davidbuscholl.veranstalter.Helpers.Validation;
 
 import org.json.JSONObject;
@@ -238,7 +238,7 @@ public class LoginRegisterActivity extends AppCompatActivity {
                     }
 
                     RequestQueue queue = Volley.newRequestQueue(rootview.getContext());
-                    String url = "http://37.221.196.48/thesis/public/user/register";
+                    String url = "http://37.221.196.48/thesis/public/user";
 
 
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {

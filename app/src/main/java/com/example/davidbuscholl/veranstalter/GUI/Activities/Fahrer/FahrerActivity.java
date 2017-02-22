@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -31,9 +30,8 @@ import com.example.davidbuscholl.veranstalter.Entities.Event;
 import com.example.davidbuscholl.veranstalter.Entities.User;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.EventListAdapter;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.Teilnehmer.TeilnehmerActivity;
-import com.example.davidbuscholl.veranstalter.GUI.Activities.Teilnehmer.TeilnehmerDetailActivity;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter.VeranstalterActivity;
-import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
+import com.example.davidbuscholl.veranstalter.GUI.Fragments.ServerErrorDialog;
 import com.example.davidbuscholl.veranstalter.Helpers.Token;
 import com.example.davidbuscholl.veranstalter.R;
 
@@ -51,6 +49,8 @@ public class FahrerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fahrer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        list = (ListView) findViewById(R.id.driEventList);
+        load();
 
         context = this;
         progress = new ProgressDialog(this);
@@ -58,7 +58,6 @@ public class FahrerActivity extends AppCompatActivity {
         progress.setMessage("Bitte warten...");
         progress.setCancelable(false);
 
-        list = (ListView) findViewById(R.id.driEventList);
         registerForContextMenu(list);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -82,7 +81,7 @@ public class FahrerActivity extends AppCompatActivity {
                         }
                         progress.show();
                         RequestQueue queue = Volley.newRequestQueue(context);
-                        String url = "http://37.221.196.48/thesis/public/event/" + m_Text.trim() + "/registerDriver?token=" + Token.get(context);
+                        String url = "http://37.221.196.48/thesis/public/events/" + m_Text.trim() + "/registerDriver?token=" + Token.get(context);
 
                         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
                             @Override

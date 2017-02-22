@@ -15,11 +15,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.davidbuscholl.veranstalter.GUI.Activities.Fahrer.FahrerActivity;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.Teilnehmer.TeilnehmerActivity;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter.VeranstalterActivity;
-import com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter.VeranstaltungDetailActivity;
 import com.example.davidbuscholl.veranstalter.R;
-import com.example.davidbuscholl.veranstalter.GUI.ServerErrorDialog;
+import com.example.davidbuscholl.veranstalter.GUI.Fragments.ServerErrorDialog;
 import com.example.davidbuscholl.veranstalter.Entities.User;
 
 import org.json.JSONArray;
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                     context.startActivity(new Intent(context,VeranstalterActivity.class));
                     break;
                 case 2:
-                    context.startActivity(new Intent(context,VeranstalterActivity.class));
+                    context.startActivity(new Intent(context,FahrerActivity.class));
                     break;
                 case 3:
                     context.startActivity(new Intent(context,TeilnehmerActivity.class));
