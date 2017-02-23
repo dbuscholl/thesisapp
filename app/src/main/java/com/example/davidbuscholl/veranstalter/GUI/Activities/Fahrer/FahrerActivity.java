@@ -28,6 +28,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.davidbuscholl.veranstalter.Entities.Event;
 import com.example.davidbuscholl.veranstalter.Entities.User;
+import com.example.davidbuscholl.veranstalter.GUI.Activities.DriverEventListAdapter;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.EventListAdapter;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.Teilnehmer.TeilnehmerActivity;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.Veranstalter.VeranstalterActivity;
@@ -141,18 +142,21 @@ public class FahrerActivity extends AppCompatActivity {
                     ob = new JSONObject(response);
                     if (ob.has("success")) {
                         if (ob.getBoolean("success")) {
-                            EventListAdapter ela = new EventListAdapter(context, ob.getJSONArray("events"));
-                            list.setAdapter(ela);
+                            DriverEventListAdapter dla = new DriverEventListAdapter(context, ob.getJSONArray("data"));
+                            list.setAdapter(dla);
                             list.setOnItemClickListener(new FahrerActivity.ClickListener());
+                            if (User.getCurrent().getAdresse().equals("")) {
+                                TeilnehmerActivity.askAdress(context,"Gib die Adresse ein, von der aus du losfahren wirst:");
+                            }
                         } else {
-                            ServerErrorDialog.show(getApplicationContext(), ob.getString("error"));
+                            ServerErrorDialog.show(context, ob.getString("error"));
                         }
                     } else {
-                        ServerErrorDialog.show(getApplicationContext());
+                        ServerErrorDialog.show(context);
                         finish();
                     }
                 } catch (Exception e) {
-                    ServerErrorDialog.show(getApplicationContext());
+                    ServerErrorDialog.show(context);
                     e.printStackTrace();
                     finish();
                 }

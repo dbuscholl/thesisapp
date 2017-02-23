@@ -1,5 +1,6 @@
 package com.example.davidbuscholl.veranstalter.GUI.Activities.Teilnehmer;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -255,7 +256,7 @@ public class TeilnehmerActivity extends AppCompatActivity {
                             list.setAdapter(ela);
                             list.setOnItemClickListener(new ClickListener());
                             if (User.getCurrent().getAdresse().equals("")) {
-                                askAdress();
+                                askAdress(context, "Keine Adresse hinterlegt! Gib sie hier ein:");
                             }
                         } else {
                             ServerErrorDialog.show(context, ob.getString("error"));
@@ -279,9 +280,10 @@ public class TeilnehmerActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    private void askAdress() {
+    public static void askAdress(final Context context, String title) {
+        final String[] address = new String[1];
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Deine Adresse ist noch nicht hinterlegt. Bitte gib sie hier ein!.");
+        builder.setTitle(title);
 
         final EditText input = new EditText(context);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -297,13 +299,13 @@ public class TeilnehmerActivity extends AppCompatActivity {
         builder.setPositiveButton("Hinzufügen", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                m_Text = input.getText().toString();
-                if (m_Text.trim().length() == 0) {
+                address[0] = input.getText().toString();
+                if (address[0].trim().length() == 0) {
                     ServerErrorDialog.show(context, "Keinen Text eingegeben.");
                     return;
                 }
 
-                AddressAutoComplete.show(context, m_Text, new AddressChosenInterface() {
+                AddressAutoComplete.show(context, address[0], new AddressChosenInterface() {
                     @Override
                     public void onAddressChosen(final String chosen) {
                         progress.show();
@@ -328,12 +330,12 @@ public class TeilnehmerActivity extends AppCompatActivity {
                                         }
                                     } else {
                                         ServerErrorDialog.show(context);
-                                        finish();
+                                        ((Activity) context).finish();
                                     }
                                 } catch (Exception e) {
                                     ServerErrorDialog.show(context);
                                     e.printStackTrace();
-                                    finish();
+                                    ((Activity) context).finish();
                                 }
                             }
                         }, new Response.ErrorListener() {
