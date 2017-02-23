@@ -51,7 +51,6 @@ public class FahrerActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         list = (ListView) findViewById(R.id.driEventList);
-        load();
 
         context = this;
         progress = new ProgressDialog(this);
@@ -59,6 +58,7 @@ public class FahrerActivity extends AppCompatActivity {
         progress.setMessage("Bitte warten...");
         progress.setCancelable(false);
 
+        load();
         registerForContextMenu(list);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -129,6 +129,7 @@ public class FahrerActivity extends AppCompatActivity {
 
 
     public void load() {
+        progress.show();
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "http://37.221.196.48/thesis/public/user/driving?token=" + Token.get(this);
 

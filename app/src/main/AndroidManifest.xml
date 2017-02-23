@@ -62,7 +62,12 @@
         <activity
             android:name=".GUI.Activities.Fahrer.FahrerDetailActivity"
             android:label="@string/title_activity_fahrer_detail"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:parentActivityName=".GUI.Activities.Fahrer.FahrerActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.davidbuscholl.veranstalter.GUI.Activities.Fahrer.FahrerActivity" />
+        </activity>
     </application>
 
 </manifest>
