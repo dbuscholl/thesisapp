@@ -12,15 +12,35 @@ public class Station {
     private String time;
     private String address;
     private String name;
+    private float latitude;
+    private float longitude;
 
-    public Station(String time, String address, String name) {
+    public Station(String time, String address, String name, float latitude, float longitude) {
         this.time = time;
         this.address = address;
         this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public Station() {
 
+    }
+
+    public float getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
+    }
+
+    public float getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
     }
 
     public static ArrayList<Station> getEventlist() {

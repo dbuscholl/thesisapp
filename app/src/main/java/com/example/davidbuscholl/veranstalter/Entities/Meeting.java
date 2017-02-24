@@ -8,17 +8,37 @@ import java.util.ArrayList;
 public class Meeting {
     private int eventId;
     private int id;
+    private String driverUsername;
+    private String driverFullname;
     private String datestart;
     private String dateend;
     private ArrayList<Refuse> refuses = new ArrayList<>();
 
     public Meeting() {}
 
-    public Meeting(int eventId, int id, String datestart, String dateend) {
+    public Meeting(int eventId, int id, String driverUsername, String driverFullname, String datestart, String dateend) {
         this.eventId = eventId;
         this.id = id;
+        this.driverUsername = driverUsername;
+        this.driverFullname = driverFullname;
         this.datestart = datestart;
         this.dateend = dateend;
+    }
+
+    public String getDriverUsername() {
+        return driverUsername;
+    }
+
+    public void setDriverUsername(String driverUsername) {
+        this.driverUsername = driverUsername;
+    }
+
+    public String getDriverFullname() {
+        return driverFullname;
+    }
+
+    public void setDriverFullname(String driverFullname) {
+        this.driverFullname = driverFullname;
     }
 
     public String getDatestart() {

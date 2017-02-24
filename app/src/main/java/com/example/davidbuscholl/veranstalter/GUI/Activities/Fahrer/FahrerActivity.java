@@ -26,6 +26,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.davidbuscholl.veranstalter.Entities.DriverEvent;
 import com.example.davidbuscholl.veranstalter.Entities.Event;
 import com.example.davidbuscholl.veranstalter.Entities.User;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.DriverEventListAdapter;
@@ -143,11 +144,15 @@ public class FahrerActivity extends AppCompatActivity {
                     ob = new JSONObject(response);
                     if (ob.has("success")) {
                         if (ob.getBoolean("success")) {
-                            DriverEventListAdapter dla = new DriverEventListAdapter(context, ob.getJSONArray("data"));
-                            list.setAdapter(dla);
-                            list.setOnItemClickListener(new FahrerActivity.ClickListener());
-                            if (User.getCurrent().getAdresse().equals("")) {
-                                TeilnehmerActivity.askAdress(context,"Gib die Adresse ein, von der aus du losfahren wirst:");
+                            if(ob.has("data")) {
+                                DriverEventListAdapter dla = new DriverEventListAdapter(context, ob.getJSONArray("data"));
+                                list.setAdapter(dla);
+                                list.setOnItemClickListener(new FahrerActivity.ClickListener());
+                                if (User.getCurrent().getAdresse().equals("")) {
+                                    TeilnehmerActivity.askAdress(context, "Gib die Adresse ein, von der aus du losfahren wirst:");
+                                }
+                            } else {
+                                list.setAdapter(null);
                             }
                         } else {
                             ServerErrorDialog.show(context, ob.getString("error"));
@@ -186,11 +191,11 @@ public class FahrerActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.eventlistDelete:
                 final int listPosition = info.position;
-                int id = Event.get(listPosition).getId();
+                int id = DriverEvent.get(listPosition).getId();
                 progress.show();
 
                 RequestQueue queue = Volley.newRequestQueue(this);
-                String url = "http://37.221.196.48/thesis/public/event/" + id + "/unregisterDriver?token=" + Token.get(this);
+                String url = "http://37.221.196.48/thesis/public/events/" + id + "/unregisterDriver?token=" + Token.get(this);
 
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
                     @Override

@@ -2,10 +2,12 @@ package com.example.davidbuscholl.veranstalter.GUI.Activities.Fahrer;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -49,9 +52,10 @@ public class FahrerDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        context = this;
         Intent i = getIntent();
         position = i.getIntExtra("event", -1);
-        if (position == -1 || position >= Event.size()) {
+        if (position == -1 || position >= DriverEvent.size()) {
             ServerErrorDialog.show(context, "Fehlerhafter Aufruf");
             finish();
             return;
@@ -68,7 +72,6 @@ public class FahrerDetailActivity extends AppCompatActivity {
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        context = this;
         progress = new ProgressDialog(this);
         progress.setTitle("Ladevorgang");
         progress.setMessage("Bitte warten...");
@@ -119,6 +122,56 @@ public class FahrerDetailActivity extends AppCompatActivity {
                             StationListAdapter sla = new StationListAdapter(context, ob.getJSONArray("data"));
                             list.setAdapter(sla);
                         } else {
+                            if (ob.has("error") && ob.getString("error").equals("Treffen hat keine Route!")) {
+                                new AlertDialog.Builder(context).setTitle("Routenproblem!").setMessage("Die Route hat sich geändert bzw. es ist noch keine vorhanden. \nWillst du jetzt eine Route berechnen lassen? Das dauert vielleicht ein bisschen...").setPositiveButton("Ja!", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        makeRouteRequest();
+                                    }
+                                }).setNegativeButton("Nein!", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        finish();
+                                    }
+                                }).show();
+                            }
+                        }
+                    } else {
+                        ServerErrorDialog.show(context);
+                        finish();
+                    }
+                } catch (Exception e) {
+                    ServerErrorDialog.show(context);
+                    e.printStackTrace();
+                    finish();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        queue.add(stringRequest);
+    }
+
+    private void makeRouteRequest() {
+        progress.show();
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "http://37.221.196.48/thesis/public/driver/route/" + String.valueOf(de.getId()) + "?token=" + Token.get(this);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                progress.dismiss();
+                Log.i(this.toString(), response);
+                JSONObject ob = null;
+                try {
+                    ob = new JSONObject(response);
+                    if (ob.has("success")) {
+                        if (ob.getBoolean("success")) {
+                            load();
+                        } else {
                             ServerErrorDialog.show(context, ob.getString("error"));
                         }
                     } else {
@@ -137,6 +190,7 @@ public class FahrerDetailActivity extends AppCompatActivity {
                 error.printStackTrace();
             }
         });
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(45000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(stringRequest);
     }
 }

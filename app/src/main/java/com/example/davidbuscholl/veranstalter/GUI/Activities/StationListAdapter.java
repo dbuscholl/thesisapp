@@ -31,7 +31,7 @@ public class StationListAdapter extends BaseAdapter {
         Station.clear();
         try {
             for(int i = 0; i < events.length(); i++) {
-                Station.add(new Station(events.getJSONObject(i).getString("time"),events.getJSONObject(i).getString("address"),events.getJSONObject(i).getString("name")));
+                Station.add(new Station(events.getJSONObject(i).getString("time"),events.getJSONObject(i).getString("address"),events.getJSONObject(i).getString("name"),Float.parseFloat(events.getJSONObject(i).getString("latitude")),Float.parseFloat(events.getJSONObject(i).getString("longitude"))));
             }
         } catch (JSONException e) {
             e.printStackTrace();

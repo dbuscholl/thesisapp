@@ -19,6 +19,7 @@ public class Event {
     private int id;
 
     private int participants;
+
     public Event(int id, String name, String location) {
         this.id = id;
         this.name = name;
@@ -135,7 +136,7 @@ public class Event {
             JSONArray jsonmeet = ob.getJSONArray("meetings");
             for (int j = 0; j < jsonmeet.length(); j++) {
                 JSONObject m = jsonmeet.getJSONObject(j);
-                Meeting meeting = new Meeting(Integer.parseInt(m.getString("angebotId")), Integer.parseInt(m.getString("id")), m.getString("datumStart"), m.getString("datumEnde"));
+                Meeting meeting = new Meeting(Integer.parseInt(m.getString("angebotId")), Integer.parseInt(m.getString("id")), m.getString("driverusername"), m.getString("driverfullname"), m.getString("datumStart"), m.getString("datumEnde"));
                 for (Refuse r : refuses) {
                     if (r.getMeeting() == meeting.getId()) {
                         meeting.getRefuses().add(r);

@@ -352,6 +352,7 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
                 TextView time = (TextView) row.findViewById(R.id.vaDetTime);
                 TextView yes = (TextView) row.findViewById(R.id.vaDetYes);
                 TextView no = (TextView) row.findViewById(R.id.vaDetNo);
+                TextView driver = (TextView) row.findViewById(R.id.vaDetDriver);
 
                 Meeting m = eventDetail.getMeetings().get(position);
                 try {
@@ -364,6 +365,8 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
 
                     df = new SimpleDateFormat("HH:mm");
                     time.setText(df.format(start) + " - " + df.format(end));
+
+                    driver.setText(m.getDriverFullname() + " (" + m.getDriverUsername() + ")");
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
