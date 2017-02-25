@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -24,6 +25,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.davidbuscholl.veranstalter.Entities.DriverEvent;
 import com.example.davidbuscholl.veranstalter.Entities.Event;
+import com.example.davidbuscholl.veranstalter.Entities.Station;
 import com.example.davidbuscholl.veranstalter.Entities.User;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.DriverEventListAdapter;
 import com.example.davidbuscholl.veranstalter.GUI.Activities.StationListAdapter;
@@ -66,8 +68,23 @@ public class FahrerDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (!(Station.size() < 2)) {
+                    String uri = "https://www.google.com/maps?";
+                    for (int i = 0; i < Station.size(); i++) {
+                        if (i == 0) {
+                            uri += "saddr=" + String.valueOf(Station.get(i).getLatitude()) + "," + String.valueOf(Station.get(i).getLongitude());
+                        }
+                        if (i == 1) {
+                            uri += "&daddr=" + String.valueOf(Station.get(i).getLatitude()) + "," + String.valueOf(Station.get(i).getLongitude());
+                        }
+                        if (i > 1) {
+                            uri += "+to:" + String.valueOf(Station.get(i).getLatitude()) + "," + String.valueOf(Station.get(i).getLongitude());
+                        }
+                    }
+                    Log.d("TAG",uri);
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+                    startActivity(intent);
+                }
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -190,7 +207,7 @@ public class FahrerDetailActivity extends AppCompatActivity {
                 error.printStackTrace();
             }
         });
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(45000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(45000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(stringRequest);
     }
 }
