@@ -45,6 +45,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This is the main acitivity where the participant can make actions from.
+ */
 public class TeilnehmerActivity extends AppCompatActivity {
     private static Context context;
     private static Context applicationContext;
@@ -71,6 +74,8 @@ public class TeilnehmerActivity extends AppCompatActivity {
         context = this;
         applicationContext = getApplicationContext();
 
+        // with the fab users can add events to their participating list by typing its id into the textfield
+        // the app fires a request to the server containing information about the id of the event.
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,6 +146,12 @@ public class TeilnehmerActivity extends AppCompatActivity {
         load();
     }
 
+    /**
+     * the menu appearing when the user longtaps an items
+     * @param menu inherited from parent
+     * @param v inherited from parent
+     * @param menuInfo inherited from parent
+     */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -150,6 +161,12 @@ public class TeilnehmerActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * As there is only the possibility to delete an event from the participating list, the client sends a
+     * request to the server containing the id of the event which should get removed from the list.
+     * @param item inherited from parent
+     * @return inherited from parent
+     */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -199,6 +216,11 @@ public class TeilnehmerActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * the actionbar menu. Depending on the users roles some items have to be hidden.
+     * @param menu inherited from parent
+     * @return inherited from parent
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -219,17 +241,20 @@ public class TeilnehmerActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        // logging out the user
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_parti_logout) {
             User.getCurrent().logout(context);
             return true;
         }
 
+        // if clicked on "switch to organizers view"
         if (id == R.id.action_parti_organizer) {
             context.startActivity(new Intent(context, VeranstalterActivity.class));
             finish();
         }
 
+        // if clicked on "switch to drivers view"
         if (id == R.id.action_parti_divers) {
             context.startActivity(new Intent(context, FahrerActivity.class));
             finish();
@@ -238,6 +263,10 @@ public class TeilnehmerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    /**
+     * function to load the list of participating events for the user by sendind a request to the server
+     */
     public void load() {
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "http://37.221.196.48/thesis/public/participating?token=" + Token.get(this);
@@ -280,6 +309,17 @@ public class TeilnehmerActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    /**
+     * this is being called when the client has to ask the user for its address because it is not yet registered
+     * in the servers database. The server adds a seperate object in the json response from which the client knows
+     * when to show the dialog.
+     * This method basically pops up a dialog where the user can enter some text which is validated by Google Maps Autocomplete
+     * and the result of the autocomplete will be send back to the api server which adds it to its database. An interface is
+     * used for the response from the google server where the programmer can decide what will happen after that. In this case
+     * adding it to the users basic information.
+     * @param context inherited from parent
+     * @param title inherited from parent
+     */
     public static void askAdress(final Context context, String title) {
         final String[] address = new String[1];
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -360,6 +400,10 @@ public class TeilnehmerActivity extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+     * The Click listener for the list view which opens the detail view for an event. It stores
+     * the position of the list item into the intent for its activity.
+     */
     private static class ClickListener implements AdapterView.OnItemClickListener {
 
         @Override

@@ -39,6 +39,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Activity showing detailed information about a meeting to the participant. He can accept or refuse
+ * a meeting from here.
+ */
 public class TeilnehmerDetailActivity extends AppCompatActivity {
     private static Context context;
     private static Context applicationContext;
@@ -67,6 +71,7 @@ public class TeilnehmerDetailActivity extends AppCompatActivity {
         progress.setMessage("Bitte warten...");
         progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
+        // resolving the position of the listitem which was clicked into an event class instance
         Intent i = getIntent();
         position = i.getIntExtra("event", -1);
         if (position == -1 || position >= Event.size()) {
@@ -79,6 +84,13 @@ public class TeilnehmerDetailActivity extends AppCompatActivity {
         loadEventExtras();
     }
 
+    /**
+     * fires request to the server where it should return detailed information about the event such
+     * as participants or refuses from where the number of accepts is being calculated. If positive
+     * result the list view is being filled with the information from the server response.
+     * This resets the adapter so it is dynamic and can be called also if there is already some
+     * content in the list view!
+     */
     private void loadEventExtras() {
 
         progress.show();
@@ -132,6 +144,9 @@ public class TeilnehmerDetailActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    /**
+     * The adapter which fills the content of an eventdetil into the views which build the list
+     */
     private static class MeetingsListAdapter extends BaseAdapter {
         private Context context;
         private EventDetail detail;
@@ -188,6 +203,7 @@ public class TeilnehmerDetailActivity extends AppCompatActivity {
             no.setText(String.valueOf(m.getRefuses().size()));
             yes.setText(String.valueOf(detail.getParticipants().size() - m.getRefuses().size()));
 
+            // set color depending on refused or accepted
             boolean refuse = false;
             for (Refuse r : m.getRefuses()) {
                 if (r.getParticipant() == User.getCurrent().getId()) {
@@ -205,6 +221,10 @@ public class TeilnehmerDetailActivity extends AppCompatActivity {
             return row;
         }
 
+        /**
+         * Click listener for the accept button which fires a request to the server to remove the current
+         * user from the list of refusing participants
+         */
         public static class YesClickListener implements View.OnClickListener {
             private View row;
             private EventDetail detail;
@@ -263,6 +283,7 @@ public class TeilnehmerDetailActivity extends AppCompatActivity {
             }
         }
 
+        // same as the one for the accept button but adding the user to the refusing participants list
         public static class NoClickListener implements View.OnClickListener {
             private View row;
             private EventDetail detail;

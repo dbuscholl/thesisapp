@@ -44,6 +44,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * this is the activity form which the organizer can add all meetings in an efficient way.
+ */
 public class VeranstaltungTreffenActivity extends AppCompatActivity {
     private Calendar myCalendar;
     private int eventId = -1;
@@ -65,6 +68,7 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_veranstaltung_treffen);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        // getting the event id from the intent for the later request to the server
         Intent i = getIntent();
         eventId = i.getIntExtra("event", -1);
         if (eventId == -1) {
@@ -81,11 +85,12 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
         final Button button = (Button) findViewById(R.id.mAddButton);
         myCalendar = Calendar.getInstance();
 
+        // sets the callback which will be executed as soon as a date was selected. The Calendarinstance is being
+        // set to the selected date by the user and saved for the later request
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
-                // TODO Auto-generated method stub
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -97,22 +102,24 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
 
         };
 
+        //opening datepicker dialog where users can easily set the date from
         dateInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 new DatePickerDialog(VeranstaltungTreffenActivity.this, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
 
+        /**
+         * Defines the Click Listener for the time fields which open the Timepicker dialog
+         */
         View.OnClickListener ocl = new View.OnClickListener() {
             EditText input;
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 if (v.getId() == R.id.mAddStarttime) {
                     input = (EditText) findViewById(R.id.mAddStarttime);
                 } else {
@@ -122,6 +129,7 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
                 int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
                 int minute = mcurrentTime.get(Calendar.MINUTE);
                 TimePickerDialog mTimePicker;
+                // setting which actions should happen when a time has been picked from the timepicker
                 mTimePicker = new TimePickerDialog(VeranstaltungTreffenActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
@@ -136,7 +144,7 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
         starttime.setOnClickListener(ocl);
         endtime.setOnClickListener(ocl);
 
-
+        // Building the post data for the request as hashmap
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,6 +158,7 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
                 values.put("starttime", start);
                 values.put("endtime", end);
 
+                // validating the data of the textfields
                 Validation validation = new Validation();
                 validation.check(values, ValidationRules.getMeetingRules());
                 if (!validation.hasPassed()) {
@@ -161,6 +170,7 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
                     return;
                 }
 
+                // formatting the date and parsing them to java.util.date
                 SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.GERMANY);
                 Date startdate;
                 Date enddate;
@@ -174,14 +184,18 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
                         enddate = cal.getTime();
                     }
 
+                    // as there might be repeats set for the dates there have to be arrays!
                     ArrayList<Date> startdates = new ArrayList<Date>();
                     ArrayList<Date> enddates = new ArrayList<Date>();
                     startdates.add(startdate);
                     enddates.add(enddate);
                     if (repeats.length() > 0 && radio > 0) {
                         int num = Integer.parseInt(repeats);
+
+                        // adding the repeats to the array depending on the radio button selected
                         switch(radio) {
                             case 1:
+                                //daily
                                 for(int i = 1; i <= num; i++) {
                                     cal.setTime(startdate);
                                     cal.add(Calendar.DAY_OF_MONTH, i);
@@ -191,6 +205,7 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
                                     enddates.add(cal.getTime());
                                 }
                                 break;
+                            // weekly
                             case 2:
                                 for(int i = 1; i <= num; i++) {
                                     cal.setTime(startdate);
@@ -201,6 +216,7 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
                                     enddates.add(cal.getTime());
                                 }
                                 break;
+                            // every two weeks
                             case 3:
                                 for(int i = 1; i <= num; i++) {
                                     cal.setTime(startdate);
@@ -211,6 +227,7 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
                                     enddates.add(cal.getTime());
                                 }
                                 break;
+                            // once a month
                             case 4:
                                 for(int i = 1; i <= num; i++) {
                                     cal.setTime(startdate);
@@ -226,6 +243,7 @@ public class VeranstaltungTreffenActivity extends AppCompatActivity {
 
                     final ProgressDialog progress = ProgressDialog.show(VeranstaltungTreffenActivity.this, "Ladevorgang", "Bitte warten...", true, false);
 
+                    //formatting all date objects to mysql stirngs now
                     sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.GERMANY);
                     ArrayList<String> startdatesString = new ArrayList<String>();
                     for(Date d : startdates) {

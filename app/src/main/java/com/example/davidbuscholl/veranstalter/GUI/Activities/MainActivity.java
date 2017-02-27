@@ -29,6 +29,10 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This might be the first activity being opened as soon as the app starts but it only check wether there is a token
+ * saved in the sharedpreferences and routes the user after its validation or login.0
+ */
 public class MainActivity extends AppCompatActivity {
     private SharedPreferences prefs;
     private ProgressDialog progress;
@@ -56,6 +60,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * compared the given token with the one stored on the sevrer and saves the new one from the server
+     * on success
+     * @param token the unique token for the user which should get validated
+     */
     private void validateToken(final String token) {
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "http://37.221.196.48/thesis/public/user/validateLogin";
@@ -99,6 +108,12 @@ public class MainActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    /**
+     * this function routes the user to the next activity after the login process took place
+     * @param context Context from which it should be executed (for Intent)
+     * @param ob the object conatining the response of the server where the new token is in
+     * @throws JSONException this might happen if the json is not properly build
+     */
     public static void postLogin(Context context, JSONObject ob) throws JSONException {
         JSONObject data = ob.getJSONObject("data");
         User.setCurrent(new User(data));

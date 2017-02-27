@@ -5,6 +5,10 @@ import java.util.ArrayList;
 
 /**
  * Created by David Buscholl on 23.02.2017.
+ *
+ * Entity Class containing event information specially for Drivers
+ * Containing an ArrayList where Results of a request are stored.
+ * Delegated some methods from the ArrayList
  */
 
 public class DriverEvent {

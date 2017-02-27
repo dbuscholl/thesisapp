@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 /**
  * Created by David Buscholl on 22.11.2016.
+ * Entity Class containing event information specially for EventDetails
+ * Containing ArrayLists with Participants and Meetings Entity Classes
  */
 
 public class EventDetail {

@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 /**
  * Created by David Buscholl on 10.11.2016.
+ * An example list of rules for user registration and meetings creation
  */
 
 public class ValidationRules {

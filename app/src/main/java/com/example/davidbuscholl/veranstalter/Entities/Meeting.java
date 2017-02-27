@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 /**
  * Created by David Buscholl on 22.11.2016.
+ * Entity Class containing event information specially for Meetings
+ * Containing an ArrayList where Results of a request are stored.
+ * Delegated some methods from the ArrayList
  */
 public class Meeting {
     private int eventId;

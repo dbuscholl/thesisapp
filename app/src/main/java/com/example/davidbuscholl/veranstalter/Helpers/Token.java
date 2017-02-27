@@ -10,6 +10,7 @@ import com.example.davidbuscholl.veranstalter.GUI.Activities.LoginRegisterActivi
 
 /**
  * Created by David Buscholl on 21.11.2016.
+ * simple token class which helpf to easily get the token from the sharedpreferences
  */
 
 public class Token {

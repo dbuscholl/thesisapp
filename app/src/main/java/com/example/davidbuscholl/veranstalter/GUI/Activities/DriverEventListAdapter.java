@@ -19,12 +19,18 @@ import java.util.Date;
 
 /**
  * Created by David Buscholl on 23.02.2017.
+ * the adapter holding the datastructure for the drivers meetings listview
  */
 public class DriverEventListAdapter extends BaseAdapter {
 
     private final JSONArray events;
     private final Context context;
 
+    /**
+     * creating driverevent objects from the jsonarray
+     * @param context inherited from parent
+     * @param events the json array of which the objects should be created
+     */
     public DriverEventListAdapter(Context context, JSONArray events) {
         this.events = events;
         this.context = context;
@@ -54,6 +60,13 @@ public class DriverEventListAdapter extends BaseAdapter {
         return position;
     }
 
+    /**
+     * filling the content for each listitem
+     * @param position inherited from parent
+     * @param convertView inherited from parent
+     * @param parent inherited from parent
+     * @return inherited from parent
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inf = LayoutInflater.from(context);

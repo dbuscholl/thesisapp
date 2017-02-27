@@ -40,6 +40,9 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Class which shows details of a meeting for the driver.
+ */
 public class FahrerDetailActivity extends AppCompatActivity {
     private static Context context;
     private ProgressDialog progress;
@@ -55,6 +58,8 @@ public class FahrerDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         context = this;
+
+        // resolving the passed position of the clicked item into a DriverEvent item from the Entity-Class
         Intent i = getIntent();
         position = i.getIntExtra("event", -1);
         if (position == -1 || position >= DriverEvent.size()) {
@@ -64,6 +69,7 @@ public class FahrerDetailActivity extends AppCompatActivity {
         }
         de = DriverEvent.get(position);
 
+        // building the uri for the google maps intent and firing it. Only works if there are more than two stations
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +87,7 @@ public class FahrerDetailActivity extends AppCompatActivity {
                             uri += "+to:" + String.valueOf(Station.get(i).getLatitude()) + "," + String.valueOf(Station.get(i).getLongitude());
                         }
                     }
-                    Log.d("TAG",uri);
+                    Log.d("TAG", uri);
                     Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
                     startActivity(intent);
                 }
@@ -94,6 +100,7 @@ public class FahrerDetailActivity extends AppCompatActivity {
         progress.setMessage("Bitte warten...");
         progress.setCancelable(false);
 
+        // filling the views with detail information
         TextView name = (TextView) findViewById(R.id.adetName);
         TextView date = (TextView) findViewById(R.id.adetDate);
         TextView time = (TextView) findViewById(R.id.adetTime);
@@ -121,6 +128,10 @@ public class FahrerDetailActivity extends AppCompatActivity {
         load();
     }
 
+    /**
+     * Function to download the route if there is one. If no route received from the server, the client asks if the user wants to calculate one.
+     * If accepted, a reload process will take place afterwards
+     */
     private void load() {
         progress.show();
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -172,6 +183,9 @@ public class FahrerDetailActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    /**
+     * Function to send request to the server to calculate the route for the given participants
+     */
     private void makeRouteRequest() {
         progress.show();
         RequestQueue queue = Volley.newRequestQueue(this);

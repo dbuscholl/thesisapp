@@ -40,6 +40,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The mian acitivity holding the gui for the organizer from which he can manage all his events-
+ */
 public class VeranstalterActivity extends AppCompatActivity {
     private static EventListAdapter ela;
     private ProgressDialog progress;
@@ -58,6 +61,7 @@ public class VeranstalterActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         prefs = this.getSharedPreferences("de.dbuscholl.veranstalter", Context.MODE_PRIVATE);
+        // open the activity from which the organizer can add new events
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,6 +82,11 @@ public class VeranstalterActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * action bar menu. Depending on the roles of the user some items have to be hidden
+     * @param menu inherited from parent
+     * @return inherited from parent
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -91,6 +100,11 @@ public class VeranstalterActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Function to be callend, when an item of the menu is being clicked
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -98,17 +112,20 @@ public class VeranstalterActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        // logout was clicked
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_organizer_logout) {
             User.getCurrent().logout(context);
             return true;
         }
 
+        // "switch to participants view" was clicked
         if(id == R.id.action_organizer_participants) {
             context.startActivity(new Intent(context,TeilnehmerActivity.class));
             finish();
         }
 
+        // "switch to drivers view" was clicked
         if(id == R.id.action_organizer_divers) {
             context.startActivity(new Intent(context,FahrerActivity.class));
             finish();
@@ -117,6 +134,10 @@ public class VeranstalterActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * firing a request to the server where the data of the response is filled into the listview by its adapter
+     * @param context
+     */
     public static void load(final Context context) {
         final ProgressDialog progress = new ProgressDialog(context);
         progress.setTitle("Ladevorgang");
@@ -164,6 +185,11 @@ public class VeranstalterActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    /**
+     * deletes the selected item
+     * @param item
+     * @return
+     */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();

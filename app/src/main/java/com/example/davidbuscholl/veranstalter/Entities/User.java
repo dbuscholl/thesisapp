@@ -25,6 +25,9 @@ import java.util.Map;
 
 /**
  * Created by David Buscholl on 14.11.2016.
+ * Entity Class containing event information specially for Users
+ * Containing an ArrayList where Results of a request are stored.
+ * Delegated some methods from the ArrayList
  */
 public class User {
     private int id;
@@ -66,6 +69,10 @@ public class User {
         this.joined = joined;
     }
 
+    /**
+     * Fires logout request to the server and redirects to login-Activity on positive result
+     * @param context The context from which it should be executed (for Dialogs and Request Queue)
+     */
     public void logout(final Context context) {
         ProgressDialog  progress = new ProgressDialog(context);
         progress.setTitle("Ladevorgang");

@@ -15,12 +15,18 @@ import org.json.JSONException;
 
 /**
  * Created by David Buscholl on 21.11.2016.
+ * the adapter holding the structure for the organizers events listview
  */
 public class EventListAdapter extends BaseAdapter{
 
     private final JSONArray events;
     private final Context context;
 
+    /**
+     * creates the event objects from the jsonarray
+     * @param context inherited from parent
+     * @param events the json array from which the events should be created
+     */
     public EventListAdapter(Context context, JSONArray events) {
         this.events = events;
         this.context = context;

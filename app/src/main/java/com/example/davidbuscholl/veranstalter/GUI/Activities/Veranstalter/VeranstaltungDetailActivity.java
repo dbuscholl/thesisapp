@@ -54,6 +54,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Activity holding the detail view in two tabs by the viewpager
+ */
 public class VeranstaltungDetailActivity extends AppCompatActivity {
 
     private static SectionsPagerAdapter mSectionsPagerAdapter;
@@ -71,6 +74,8 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_veranstalterdetail);
 
         context = this;
+
+        // get event item from the position which gets obtained from the intent
         Intent i = getIntent();
         position = i.getIntExtra("event", -1);
         if (position == -1 || position >= Event.size()) {
@@ -90,6 +95,11 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * sending a request to the server asking for the detailed information about an event such as
+     * list of meetings and participants
+     * @param context inherited from parent
+     */
     public static void loadEventExtras(final VeranstaltungDetailActivity context) {
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = "http://37.221.196.48/thesis/public/events/" + event.getId() + "/details";
@@ -149,6 +159,9 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    /**
+     * Method closing the activity and reopening it (workaround because the viewpager is not dynamic...)
+     */
     public static void reload() {
         Intent i = new Intent(context,VeranstaltungDetailActivity.class);
         i.putExtra("event",position);
@@ -158,6 +171,7 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
 
     /*
         ----------------------  SECTION PAGER ADAPTER --------------------------------------------------
+        tells which fragment has to be opened at which position / tab
          */
     public static class SectionsPagerAdapter extends FragmentPagerAdapter {
         private FragmentManager mFragmentManager;
@@ -192,6 +206,11 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
             return 2;
         }
 
+        /**
+         * takes care of the titles displayed on th etabs
+         * @param position inherited from parent
+         * @return inherited from parent
+         */
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
@@ -206,6 +225,7 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
 
     /*
     ----------------------  VERANSTALTUNG DETAIL FRAGMENT ------------------------------------------
+    Showing the details for an event such as Meetings list
      */
 
     public static class VeranstaltungDetailFragment extends Fragment {
@@ -231,6 +251,7 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
             return new LinearLayout(getContext());
         }
 
+        //getting all viws and filling them with information about the event
         private View loadFragment() {
             rootView = inflater.inflate(R.layout.fragment_veranstaltung_detail, container, false);
             TextView title = (TextView) rootView.findViewById(R.id.vaDetTitle);
@@ -260,11 +281,22 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
         }
 
 
+        /**
+         * Context menug which opens on long tap on a meeting to delete it
+         * @param menu inherited from parent
+         * @param v inherited from parent
+         * @param menuInfo inherited from parent
+         */
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             menu.add("Löschen");
         }
 
+        /**
+         * invoking the deletion process
+         * @param item inherited from parent
+         * @return inherited from parent
+         */
         @Override
         public boolean onContextItemSelected(MenuItem item) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -320,6 +352,8 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
 
         /*
                 ----------------------  MEETINGS ADAPTER ---------------------------------------------------
+                As all meetings are displayed in a list it also needs an adapter of which the class is described
+                here
                 */
         private static class MeetingsAdapter extends BaseAdapter {
             private Context context;
@@ -380,6 +414,8 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
 
     /*
     ----------------------  VERANSTALTUNG BESUCHER FRAGMENT ----------------------------------------
+    this fragment holds the content for the participants list. the organizer can see all people taking
+    part on the event
     */
 
     public static class VeranstaltungDetailBesucherFragment extends Fragment {
@@ -412,6 +448,8 @@ public class VeranstaltungDetailActivity extends AppCompatActivity {
 
         /*
         ----------------------  PARTICIPANTS ADAPTER -----------------------------------------------
+        as this the participants list is hold inside a listview it also needs an adapter of which the
+        class is described below
         */
         private static class ParticipantsAdapter extends BaseAdapter {
             private Context context;

@@ -20,11 +20,20 @@ import java.util.Date;
 /**
  * Created by David Buscholl on 23.02.2017.
  */
+
+/**
+ * This is the adapter holding the structure for the stations listview on the driver detail acitivity containing times and addresses of the route
+ */
 public class StationListAdapter extends BaseAdapter {
 
     private final JSONArray events;
     private final Context context;
 
+    /**
+     * creates the station objects from the given jsonarray
+     * @param context the context of which it should be executed
+     * @param events the jsonarray containing the server response with the stations
+     */
     public StationListAdapter(Context context, JSONArray events) {
         this.events = events;
         this.context = context;

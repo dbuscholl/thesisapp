@@ -29,6 +29,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * the activity holding the gui from which the organizer can add new events
+ */
 public class VeranstaltungHinzufuegenActivity extends AppCompatActivity {
     private ProgressDialog progress;
 
@@ -54,10 +57,12 @@ public class VeranstaltungHinzufuegenActivity extends AppCompatActivity {
         progress.setMessage("Bitte warten...");
         progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
+        // just two simple text fields and a button which submits the values
         final EditText namewidget = (EditText) findViewById(R.id.vaAddName);
         final EditText addresswidget = (EditText) findViewById(R.id.vaAddAddress);
         final Button add = (Button) findViewById(R.id.vaAddAdd);
 
+        // address is sent to the google maps autocomplete service to get a good address for geocoding
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,6 +83,11 @@ public class VeranstaltungHinzufuegenActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * the acutal process of adding an event to the list of oragnizing events. It sends the event data to the server.
+     * this doesnt create any meetings yet. This has to be done in a seperate view.
+     * @param map
+     */
     private void createEvent(final Map<String, String> map) {
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "http://37.221.196.48/thesis/public/events";

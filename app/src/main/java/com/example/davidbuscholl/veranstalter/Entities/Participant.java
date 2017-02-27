@@ -2,6 +2,9 @@ package com.example.davidbuscholl.veranstalter.Entities;
 
 /**
  * Created by David Buscholl on 22.11.2016.
+ * Entity Class containing event information specially for Participants
+ * Containing an ArrayList where Results of a request are stored.
+ * Delegated some methods from the ArrayList
  */
 
 public class Participant {

@@ -39,6 +39,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * this is the very first activity where the user can login or register for this app
+ */
 public class LoginRegisterActivity extends AppCompatActivity {
     public static LoginRegisterActivity lra;
     private TabLayout tabLayout;
@@ -74,7 +77,7 @@ public class LoginRegisterActivity extends AppCompatActivity {
 
 
     /**
-     * A placeholder fragment containing a simple view.
+     * The Fragment holding the login view
      */
 
     public static class LoginFragment extends Fragment {
@@ -93,6 +96,9 @@ public class LoginRegisterActivity extends AppCompatActivity {
             final EditText username = (EditText) rootview.findViewById(R.id.loginUsername);
             final EditText password = (EditText) rootview.findViewById(R.id.loginPassword);
 
+            /**
+             * sending login data to the server and saving the token on success
+             */
             login.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -156,6 +162,9 @@ public class LoginRegisterActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Fragment holding the views for the Register Tab
+     */
     public static class RegisterFragment extends Fragment {
         public RegisterFragment() {
         }
@@ -174,8 +183,7 @@ public class LoginRegisterActivity extends AppCompatActivity {
             final EditText password = (EditText) rootview.findViewById(R.id.registerPassword);
             final EditText passwordagain = (EditText) rootview.findViewById(R.id.registerPasswordAgain);
 
-            //validation
-
+            // actual process of registration
             register.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -185,6 +193,7 @@ public class LoginRegisterActivity extends AppCompatActivity {
                     progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
                     progress.show();
 
+                    //validation
                     boolean veranstalter = ((CheckBox) rootview.findViewById(R.id.register_cbVerantalter)).isChecked();
                     boolean fahrdienst = ((CheckBox) rootview.findViewById(R.id.register_cbFahrdienstleister)).isChecked();
                     boolean teilnehmer = ((CheckBox) rootview.findViewById(R.id.register_cbTeilnehmer)).isChecked();
@@ -237,6 +246,8 @@ public class LoginRegisterActivity extends AppCompatActivity {
                         return;
                     }
 
+
+                    // sending validated data to the server and redirecting to login tab
                     RequestQueue queue = Volley.newRequestQueue(rootview.getContext());
                     String url = "http://37.221.196.48/thesis/public/user";
 

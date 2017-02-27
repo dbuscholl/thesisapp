@@ -7,6 +7,9 @@ import java.util.ArrayList;
 
 /**
  * Created by David Buscholl on 22.11.2016.
+ * Entity Class containing event information specially for Organizers
+ * Containing an ArrayList where Results of a request are stored.
+ * Delegated some methods from the ArrayList
  */
 
 public class Event {
@@ -110,6 +113,11 @@ public class Event {
         this.participants = participants;
     }
 
+    /**
+     * Creates an eventDetail class with information from the given json object and stores it into
+     * as class-attribute
+     * @param ob json object created by the server containing the information for the entity class
+     */
     public void detailFromJsonObject(JSONObject ob) {
         EventDetail eventDetail = new EventDetail();
         try {

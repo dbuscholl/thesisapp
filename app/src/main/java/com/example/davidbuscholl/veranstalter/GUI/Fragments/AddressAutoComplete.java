@@ -20,6 +20,8 @@ import org.json.JSONObject;
 
 /**
  * Created by David Buscholl on 22.02.2017.
+ * This class shows the dialog to enter the users address for correct functionality of the app and
+ * gets best suggestions by the google maps autocorrection api
  */
 
 public class AddressAutoComplete {
@@ -34,6 +36,7 @@ public class AddressAutoComplete {
 
         progress.show();
 
+        //sending entered stirng to the google maps autocomplete api
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = "https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyD_uzMvvN_g4A8f4BJoIxzu82Zu-S2kybQ&language=de&components=country:de&input=" + input;
 
@@ -47,6 +50,8 @@ public class AddressAutoComplete {
                     ob = new JSONObject(response);
                     if(ob.has("status")) {
                         if (ob.getString("status").equals("OK")) {
+
+                            // building the dialog from which the user can select one of the suggested addresses
                             JSONArray arr = ob.getJSONArray("predictions");
                             final String [] values = new String[arr.length()];
                             for(int i = 0; i < arr.length(); i++) {
@@ -59,6 +64,7 @@ public class AddressAutoComplete {
                                     .setItems(values, new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
                                             chosen = values[which];
+                                            // calling the callback of the interface for post selection (e.g. updating user details)
                                             callback.onAddressChosen(chosen);
                                         }
                                     });

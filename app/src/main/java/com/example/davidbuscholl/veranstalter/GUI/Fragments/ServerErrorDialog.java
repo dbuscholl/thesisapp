@@ -8,6 +8,7 @@ import com.example.davidbuscholl.veranstalter.R;
 
 /**
  * Created by David Buscholl on 11.11.2016.
+ * A simple dialog indicating that an error has occured in the process of contacting the server. It can be filled with own content!
  */
 public class ServerErrorDialog {
     public static void show(Context context, String content) {

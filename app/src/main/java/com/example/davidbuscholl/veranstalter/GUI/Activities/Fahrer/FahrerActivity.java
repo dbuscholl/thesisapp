@@ -39,6 +39,10 @@ import com.example.davidbuscholl.veranstalter.R;
 
 import org.json.JSONObject;
 
+/**
+ * This is the Driver Activity containing main options for the driver such as adding Tracks to drive
+ * and choose a meeting to get more information about.
+ */
 public class FahrerActivity extends AppCompatActivity {
     private ProgressDialog progress;
     private static Context context;
@@ -60,10 +64,15 @@ public class FahrerActivity extends AppCompatActivity {
         progress.setCancelable(false);
 
         load();
+        //make longtap-menu pop out
         registerForContextMenu(list);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Fires a request where a driver can be registered for an event as standarddriver
+             * @param view inherited from parent
+             */
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -128,7 +137,10 @@ public class FahrerActivity extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * Loading all meetings by firing a request where the driver is driving for. If positive result
+     * the list will append every meeting.
+     */
     public void load() {
         progress.show();
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -176,6 +188,12 @@ public class FahrerActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    /**
+     * opening longtap menu depending on item on which it was executed
+     * @param menu inherited from parent
+     * @param v inherited from parent
+     * @param menuInfo inherited from parent
+     */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -185,6 +203,13 @@ public class FahrerActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Actions which should be done after clicking on a menu item of the longtap-menu. As there is only
+     * one item, the only action available is to delete a meeting the driver drives for currently. Reloading
+     * the list after a positive response was received from the server
+     * @param item inherited from parent
+     * @return inherited from parent
+     */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -234,10 +259,18 @@ public class FahrerActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method to be executed when the actionbar menu is being clicked. Depending on the roles some
+     * items have to be hidden by the system (switch to organizer view / switch to participants view)
+     * @param menu inherited from parent
+     * @return inherited from parent
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_driver, menu);
+        //noinspection SimplifiableIfStatement
+
         if (User.getCurrent().roles().indexOf(1) == -1) {
             menu.findItem(R.id.action_driver_organizer).setVisible(false);
         }
@@ -254,17 +287,20 @@ public class FahrerActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        //logout user button
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_driver_logout) {
             User.getCurrent().logout(context);
             return true;
         }
 
+        // button "switch to organizer view"
         if (id == R.id.action_driver_organizer) {
             context.startActivity(new Intent(context, VeranstalterActivity.class));
             finish();
         }
 
+        // button "switch to participants view
         if (id == R.id.action_driver_parti) {
             context.startActivity(new Intent(context, TeilnehmerActivity.class));
             finish();
@@ -273,6 +309,10 @@ public class FahrerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Click Listener for Meetings-ListItems. It opens the FahrerDetailActivity and passing the
+     * position of the clicked item to it.
+     */
     private static class ClickListener implements AdapterView.OnItemClickListener {
 
         @Override
